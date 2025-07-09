@@ -24,7 +24,7 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            overflow-x: hidden;
+            overflow-x: hidden; /* Prevent horizontal scroll */
         }
         .main-content-wrapper {
             display: flex;
@@ -51,6 +51,12 @@
             opacity: 1;
             transform: translateY(0) scale(1);
             transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        /* Class to trigger initial load animation */
+        .container.animate-initial-load {
+            opacity: 0;
+            transform: translateY(30px) scale(0.95);
+            animation: fadeInPopUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
 
         @media (max-width: 768px) {
@@ -467,7 +473,7 @@
             text-shadow: 0.5px 0.5px 1px rgba(0,0,0,0.03);
         }
         .rules-section ol {
-            list-style-type: decimal;
+            list-style-type: decimal; /* Explicitly set decimal numbering */
             padding-left: 25px;
             margin-bottom: 20px;
         }
@@ -561,6 +567,8 @@
             background-color: #000;
             margin: 20px auto;
             display: block;
+            border: 4px solid #cfd8dc; /* Default border for webcam */
+            transition: border-color 0.5s ease-in-out; /* Smooth border transition */
         }
         #faceDetectionMessage {
             margin-top: 15px;
@@ -781,16 +789,15 @@
             container.classList.add('animate-initial-load');
 
             const rulesContainer = document.getElementById('rulesContainer');
-            const faceDetectionContainer = document.getElementById('faceDetectionContainer'); // New container
+            const faceDetectionContainer = document.getElementById('faceDetectionContainer');
             const memberFormContainer = document.getElementById('memberFormContainer');
             const agreeToRulesCheckbox = document.getElementById('agreeToRules');
-            const continueButton = document.getElementById('continueButton'); // Rules to Face Detection
+            const continueButton = document.getElementById('continueButton');
 
-            // Face Detection Elements
             const webcamVideo = document.getElementById('webcamVideo');
             const faceDetectionMessage = document.getElementById('faceDetectionMessage');
             const startWebcamButton = document.getElementById('startWebcamButton');
-            const continueToFormButton = document.getElementById('continueToFormButton'); // Face Detection to Form
+            const continueToFormButton = document.getElementById('continueToFormButton');
 
             const memberForm = document.getElementById('memberForm');
             const submitButton = document.getElementById('submitButton');
@@ -816,7 +823,9 @@
             const downloadQrButton = document.getElementById('downloadQrButton');
 
             let currentMemberNickname = '';
-            let mediaStream = null; // To store the webcam stream
+            let mediaStream = null;
+            let faceDetectionTimeoutId = null; // To hold the timeout for simulated detection
+
 
             const testerQrData = {
                 "Ramsky": "https://wa.me/6285693393707",
@@ -890,7 +899,6 @@
                 }, 300); 
             }
 
-            // --- Rules Agreement and Continue Button Logic ---
             agreeToRulesCheckbox.addEventListener('change', function() {
                 if (this.checked) {
                     continueButton.disabled = false;
@@ -904,41 +912,72 @@
             continueButton.addEventListener('click', function() {
                 if (agreeToRulesCheckbox.checked) {
                     rulesContainer.classList.add('hidden');
-                    faceDetectionContainer.classList.remove('hidden'); // Show face detection
+                    faceDetectionContainer.classList.remove('hidden');
                     faceDetectionContainer.classList.add('animate-fade-in-slide-up');
+                    // Reset face detection state when entering this section
+                    faceDetectionMessage.textContent = 'Menunggu akses kamera...';
+                    startWebcamButton.disabled = false;
+                    continueToFormButton.disabled = true;
+                    webcamVideo.style.borderColor = '#cfd8dc'; // Reset border color
+                    webcamVideo.style.borderWidth = '4px'; // Reset border width
+                    if (mediaStream) { // Ensure stream is stopped if somehow still active
+                        mediaStream.getTracks().forEach(track => track.stop());
+                        webcamVideo.srcObject = null;
+                    }
+                    if (faceDetectionTimeoutId) { // Clear any pending detection timeouts
+                        clearTimeout(faceDetectionTimeoutId);
+                        faceDetectionTimeoutId = null;
+                    }
                 }
             });
-            // --- End Rules Agreement and Continue Button Logic ---
 
-            // --- Face Detection Logic ---
             startWebcamButton.addEventListener('click', async () => {
                 startWebcamButton.disabled = true;
                 faceDetectionMessage.textContent = 'Memulai kamera...';
                 try {
                     mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
                     webcamVideo.srcObject = mediaStream;
-                    webcamVideo.play();
-                    faceDetectionMessage.textContent = 'Kamera aktif. Pendeteksi wajah siap!';
-                    continueToFormButton.disabled = false; // Enable continue button
+                    await webcamVideo.play();
+
+                    faceDetectionMessage.textContent = 'Kamera aktif. Mencari wajah...';
+                    webcamVideo.style.borderColor = '#f59e0b'; // Amber border for "searching"
+                    webcamVideo.style.borderWidth = '4px';
+
+                    // Simulate face detection after 3 seconds
+                    faceDetectionTimeoutId = setTimeout(() => {
+                        faceDetectionMessage.textContent = 'Wajah Terdeteksi!';
+                        webcamVideo.style.borderColor = '#10b981'; // Green border for "detected"
+                        webcamVideo.style.borderWidth = '4px';
+                        continueToFormButton.disabled = false; // Enable continue button
+                        faceDetectionTimeoutId = null; // Clear timeout ID
+                    }, 3000); // 3 seconds for simulated detection
+
                 } catch (err) {
                     console.error("Error accessing webcam: ", err);
                     faceDetectionMessage.textContent = 'Gagal mengakses kamera. Pastikan izin diberikan.';
                     startWebcamButton.disabled = false; // Allow retry
+                    webcamVideo.style.borderColor = '#ef4444'; // Red border for error
+                    webcamVideo.style.borderWidth = '4px';
+                    if (faceDetectionTimeoutId) { // Clear any pending timeout on error
+                        clearTimeout(faceDetectionTimeoutId);
+                        faceDetectionTimeoutId = null;
+                    }
                 }
             });
 
             continueToFormButton.addEventListener('click', () => {
-                // Stop webcam stream when moving to the next section
                 if (mediaStream) {
                     mediaStream.getTracks().forEach(track => track.stop());
                     webcamVideo.srcObject = null;
+                }
+                if (faceDetectionTimeoutId) { // Clear any pending detection timeouts
+                    clearTimeout(faceDetectionTimeoutId);
+                    faceDetectionTimeoutId = null;
                 }
                 faceDetectionContainer.classList.add('hidden');
                 memberFormContainer.classList.remove('hidden');
                 memberFormContainer.classList.add('animate-fade-in-slide-up');
             });
-            // --- End Face Detection Logic ---
-
 
             socialMediaYes.addEventListener('change', function() {
                 socialMediaInputContainer.classList.remove('hidden');
@@ -1027,14 +1066,20 @@
                 if (mediaStream) {
                     mediaStream.getTracks().forEach(track => track.stop());
                     webcamVideo.srcObject = null;
-                    startWebcamButton.disabled = false; // Re-enable start webcam button
-                    continueToFormButton.disabled = true; // Disable continue to form button
-                    faceDetectionMessage.textContent = 'Menunggu akses kamera...';
                 }
+                if (faceDetectionTimeoutId) {
+                    clearTimeout(faceDetectionTimeoutId);
+                    faceDetectionTimeoutId = null;
+                }
+                startWebcamButton.disabled = false;
+                continueToFormButton.disabled = true;
+                faceDetectionMessage.textContent = 'Menunggu akses kamera...';
+                webcamVideo.style.borderColor = '#cfd8dc';
+                webcamVideo.style.borderWidth = '4px';
 
                 memberFormContainer.classList.add('hidden');
                 memberFormContainer.classList.remove('animate-fade-in-slide-up');
-                faceDetectionContainer.classList.add('hidden'); // Ensure face detection is hidden
+                faceDetectionContainer.classList.add('hidden');
                 faceDetectionContainer.classList.remove('animate-fade-in-slide-up');
 
                 rulesContainer.classList.remove('hidden');
