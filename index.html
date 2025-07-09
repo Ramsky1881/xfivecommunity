@@ -20,11 +20,11 @@
             padding: 20px;
             margin: 0;
             display: flex;
-            flex-direction: column; /* Changed to column to allow footer at bottom */
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            overflow-x: hidden; /* Prevent horizontal scroll */
+            overflow-x: hidden;
         }
         .main-content-wrapper {
             display: flex;
@@ -35,8 +35,8 @@
             max-width: 700px;
             padding: 0 10px;
             box-sizing: border-box;
-            flex-grow: 1; /* Allow content to grow and push footer down */
-            justify-content: center; /* Center content vertically if space allows */
+            flex-grow: 1;
+            justify-content: center;
         }
         .container {
             background-color: rgba(255, 255, 255, 0.95);
@@ -126,7 +126,7 @@
             align-items: center;
             justify-content: center;
             text-decoration: none;
-            color: white; /* Default white text for all custom buttons */
+            color: white;
             letter-spacing: 0.5px;
         }
         .btn:hover {
@@ -193,43 +193,37 @@
             background-image: linear-gradient(to right, #047857, #15803d);
         }
 
-
-        /* Community Social Media Buttons Container */
-        .community-social-media-links {
+        /* Livechat Button */
+        .btn-livechat-bubble {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #f59e0b;
+            background-image: linear-gradient(to bottom right, #f59e0b, #fbbf24);
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.6);
+            color: white;
+            font-size: 1.5rem;
             display: flex;
-            flex-wrap: wrap;
-            gap: 8px; /* Reduced gap for tighter fit */
+            align-items: center;
             justify-content: center;
-            margin-top: 25px;
-            padding-top: 25px;
-            border-top: 1px solid #eceff1;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
         }
-        .community-social-media-links h3 {
-            width: 100%;
-            margin-bottom: 15px;
+        .btn-livechat-bubble:hover {
+            transform: scale(1.1);
+            background-color: #d97706;
+            background-image: linear-gradient(to bottom right, #d97706, #fcd34d);
+            box-shadow: 0 12px 25px rgba(245, 158, 11, 0.7);
         }
-        .community-social-media-links .btn-social-media {
-            flex-grow: 0; /* Don't let them grow too much */
-            width: auto; /* Auto width based on content */
-            padding: 10px 15px; /* Smaller padding for smaller buttons */
-            font-size: 0.9rem; /* Smaller font size */
-            border-radius: 8px; /* Slightly less rounded */
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1); /* Lighter shadow */
-            color: white; /* Ensure text and icon are white */
+        .btn-livechat-bubble:active {
+            transform: scale(1.0);
+            box-shadow: 0 6px 15px rgba(245, 158, 11, 0.5);
         }
-        .community-social-media-links .btn-social-media svg {
-            margin-right: 6px; /* Smaller margin for icon */
-            width: 18px; /* Smaller icon */
-            height: 18px;
-            fill: currentColor; /* Inherit color from parent */
+        .btn-livechat-bubble svg {
+            width: 30px;
+            height: 30px;
+            fill: currentColor;
         }
-        @media (max-width: 480px) {
-            .community-social-media-links .btn-social-media {
-                flex-basis: calc(50% - 4px); /* Two columns on very small screens */
-            }
-        }
-
-        /* Livechat Bubble Styles */
+        /* Livechat Floating Bubble */
         .livechat-bubble-container {
             position: fixed;
             bottom: 30px;
@@ -237,10 +231,9 @@
             z-index: 100;
             display: flex;
             flex-direction: column;
-            align-items: flex-end; /* Align text to the right of the bubble */
+            align-items: flex-end;
             gap: 10px;
         }
-
         .livechat-text-bubble {
             background-color: #fff;
             color: #333;
@@ -252,44 +245,48 @@
             opacity: 0;
             transform: translateY(10px);
             transition: opacity 0.3s ease-out, transform 0.3s ease-out;
-            pointer-events: none; /* Allow clicks to pass through to the button */
-            white-space: nowrap; /* Prevent text wrapping */
+            pointer-events: none;
+            white-space: nowrap;
         }
-
         .livechat-bubble-container:hover .livechat-text-bubble {
             opacity: 1;
             transform: translateY(0);
         }
 
-        .btn-livechat-bubble {
-            width: 60px; /* Make it a perfect circle */
-            height: 60px;
-            border-radius: 50%; /* Make it round */
-            background-color: #f59e0b; /* Amber color */
-            background-image: linear-gradient(to bottom right, #f59e0b, #fbbf24);
-            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.6); /* Stronger shadow for bubble */
-            color: white;
-            font-size: 1.5rem; /* Icon size */
+
+        /* Community Social Media Buttons Container */
+        .community-social-media-links {
             display: flex;
-            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
             justify-content: center;
-            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid #eceff1;
         }
-        .btn-livechat-bubble:hover {
-            transform: scale(1.1); /* Pop effect on hover */
-            background-color: #d97706;
-            background-image: linear-gradient(to bottom right, #d97706, #fcd34d);
-            box-shadow: 0 12px 25px rgba(245, 158, 11, 0.7);
+        .community-social-media-links h3 {
+            width: 100%;
+            margin-bottom: 15px;
         }
-        .btn-livechat-bubble:active {
-            transform: scale(1.0);
-            box-shadow: 0 6px 15px rgba(245, 158, 11, 0.5);
+        .community-social-media-links .btn-social-media {
+            flex-grow: 0;
+            width: auto;
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+            color: white;
         }
-        /* Livechat icon (SVG for chat bubble) */
-        .btn-livechat-bubble svg {
-            width: 30px;
-            height: 30px;
+        .community-social-media-links .btn-social-media svg {
+            margin-right: 6px;
+            width: 18px;
+            height: 18px;
             fill: currentColor;
+        }
+        @media (max-width: 480px) {
+            .community-social-media-links .btn-social-media {
+                flex-basis: calc(50% - 4px);
+            }
         }
 
         .hidden {
@@ -328,10 +325,10 @@
             opacity: 0;
             transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.5s ease-out;
             position: relative;
-            max-height: 90vh; /* Allow modal content to scroll */
-            overflow-y: auto; /* Enable vertical scrolling within the modal */
+            max-height: 90vh;
+            overflow-y: auto;
         }
-        @media (max-width: 480px) { /* Adjust padding for very small screens */
+        @media (max-width: 480px) {
             .modal-content {
                 padding: 25px;
             }
@@ -393,8 +390,8 @@
             border: 8px solid #6366f1;
             border-radius: 16px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            max-width: 100%; /* Ensure QR code is responsive */
-            height: auto; /* Maintain aspect ratio */
+            max-width: 100%;
+            height: auto;
         }
         .loading-spinner {
             border: 4px solid rgba(255, 255, 255, 0.4);
@@ -470,7 +467,7 @@
             text-shadow: 0.5px 0.5px 1px rgba(0,0,0,0.03);
         }
         .rules-section ol {
-            list-style-type: decimal; /* Explicitly set decimal numbering */
+            list-style-type: decimal;
             padding-left: 25px;
             margin-bottom: 20px;
         }
@@ -536,6 +533,59 @@
             max-width: 700px;
             box-sizing: border-box;
         }
+
+        /* Face Detection Section Styles */
+        #faceDetectionContainer {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+            width: 100%;
+            border: 1px solid rgba(224, 224, 224, 0.6);
+            text-align: center;
+            opacity: 0;
+            transform: translateY(30px) scale(0.95);
+            transition: opacity 0.7s ease-out, transform 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #faceDetectionContainer.animate-fade-in-slide-up {
+            animation: fadeInPopUp 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        #webcamVideo {
+            width: 100%;
+            max-width: 400px; /* Limit video width */
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            background-color: #000;
+            margin: 20px auto;
+            display: block;
+        }
+        #faceDetectionMessage {
+            margin-top: 15px;
+            font-size: 1.1rem;
+            color: #4b5563;
+            font-weight: 500;
+        }
+        #startWebcamButton {
+            margin-top: 20px;
+            background-color: #3b82f6; /* Blue */
+            background-image: linear-gradient(to right, #3b82f6, #2563eb);
+        }
+        #startWebcamButton:hover {
+            background-color: #2563eb;
+            background-image: linear-gradient(to right, #2563eb, #1d4ed8);
+        }
+        #continueToFormButton {
+            margin-top: 20px;
+            background-color: #10b981; /* Green */
+            background-image: linear-gradient(to right, #10b981, #34d399);
+        }
+        #continueToFormButton:hover {
+            background-color: #059669;
+            background-image: linear-gradient(to right, #059669, #22c55e);
+        }
     </style>
 </head>
 <body>
@@ -572,6 +622,23 @@
                 </div>
                 <button type="button" id="continueButton" class="btn btn-continue" disabled>
                     Lanjutkan
+                </button>
+            </div>
+
+            <!-- Face Detection Section -->
+            <div id="faceDetectionContainer" class="hidden">
+                <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">Pendeteksi Wajah Real-time</h2>
+                <p class="text-center text-gray-600 mb-4">
+                    Untuk melanjutkan, kami memerlukan akses kamera Anda untuk pendeteksian wajah. <br>
+                    Ini hanya untuk tujuan verifikasi dan tidak ada data wajah yang akan disimpan.
+                </p>
+                <video id="webcamVideo" autoplay muted playsinline></video>
+                <p id="faceDetectionMessage" class="text-center text-gray-500">Menunggu akses kamera...</p>
+                <button type="button" id="startWebcamButton" class="btn btn-primary mt-4">
+                    Mulai Deteksi Wajah
+                </button>
+                <button type="button" id="continueToFormButton" class="btn btn-continue mt-4" disabled>
+                    Lanjutkan ke Formulir
                 </button>
             </div>
 
@@ -710,15 +777,20 @@
     <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Get the main container for initial animation
             const container = document.querySelector('.container');
-            // Add the animation class immediately after DOM is loaded
             container.classList.add('animate-initial-load');
 
             const rulesContainer = document.getElementById('rulesContainer');
+            const faceDetectionContainer = document.getElementById('faceDetectionContainer'); // New container
             const memberFormContainer = document.getElementById('memberFormContainer');
             const agreeToRulesCheckbox = document.getElementById('agreeToRules');
-            const continueButton = document.getElementById('continueButton');
+            const continueButton = document.getElementById('continueButton'); // Rules to Face Detection
+
+            // Face Detection Elements
+            const webcamVideo = document.getElementById('webcamVideo');
+            const faceDetectionMessage = document.getElementById('faceDetectionMessage');
+            const startWebcamButton = document.getElementById('startWebcamButton');
+            const continueToFormButton = document.getElementById('continueToFormButton'); // Face Detection to Form
 
             const memberForm = document.getElementById('memberForm');
             const submitButton = document.getElementById('submitButton');
@@ -741,9 +813,10 @@
             const modalMessage = document.getElementById('modalMessage');
             const modalQrCodeContainer = document.getElementById('modalQrCodeContainer');
             const modalResetFormButton = document.getElementById('modalResetFormButton');
-            const downloadQrButton = document.getElementById('downloadQrButton'); // Get the new download button
+            const downloadQrButton = document.getElementById('downloadQrButton');
 
             let currentMemberNickname = '';
+            let mediaStream = null; // To store the webcam stream
 
             const testerQrData = {
                 "Ramsky": "https://wa.me/6285693393707",
@@ -766,7 +839,7 @@
                     notificationModalContent.classList.add('error');
                     modalTitle.style.color = '#ef4444';
                     modalQrCodeContainer.classList.add('hidden');
-                    downloadQrButton.classList.add('hidden'); // Hide download button on error
+                    downloadQrButton.classList.add('hidden');
                 } else {
                     notificationModalContent.classList.add('success');
                     modalTitle.style.color = '#10b981';
@@ -788,13 +861,12 @@
                         });
                         modalQrCodeContainer.classList.add('animate-scale-in');
 
-                        // Set download link for QR code
                         downloadQrButton.href = qrCanvas.toDataURL('image/png');
-                        downloadQrButton.download = `qr_x5_${currentMemberNickname || 'member'}.png`; // Dynamic filename
-                        downloadQrButton.classList.remove('hidden'); // Show download button
+                        downloadQrButton.download = `qr_x5_${currentMemberNickname || 'member'}.png`;
+                        downloadQrButton.classList.remove('hidden');
                     } else {
                         modalQrCodeContainer.classList.add('hidden');
-                        downloadQrButton.classList.add('hidden'); // Hide download button if no QR
+                        downloadQrButton.classList.add('hidden');
                     }
                 }
 
@@ -814,10 +886,11 @@
                 setTimeout(() => {
                     notificationModalOverlay.classList.add('hidden');
                     modalQrCodeContainer.classList.remove('animate-scale-in');
-                    downloadQrButton.classList.add('hidden'); // Ensure download button is hidden on modal close
+                    downloadQrButton.classList.add('hidden');
                 }, 300); 
             }
 
+            // --- Rules Agreement and Continue Button Logic ---
             agreeToRulesCheckbox.addEventListener('change', function() {
                 if (this.checked) {
                     continueButton.disabled = false;
@@ -831,10 +904,41 @@
             continueButton.addEventListener('click', function() {
                 if (agreeToRulesCheckbox.checked) {
                     rulesContainer.classList.add('hidden');
-                    memberFormContainer.classList.remove('hidden');
-                    memberFormContainer.classList.add('animate-fade-in-slide-up');
+                    faceDetectionContainer.classList.remove('hidden'); // Show face detection
+                    faceDetectionContainer.classList.add('animate-fade-in-slide-up');
                 }
             });
+            // --- End Rules Agreement and Continue Button Logic ---
+
+            // --- Face Detection Logic ---
+            startWebcamButton.addEventListener('click', async () => {
+                startWebcamButton.disabled = true;
+                faceDetectionMessage.textContent = 'Memulai kamera...';
+                try {
+                    mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    webcamVideo.srcObject = mediaStream;
+                    webcamVideo.play();
+                    faceDetectionMessage.textContent = 'Kamera aktif. Pendeteksi wajah siap!';
+                    continueToFormButton.disabled = false; // Enable continue button
+                } catch (err) {
+                    console.error("Error accessing webcam: ", err);
+                    faceDetectionMessage.textContent = 'Gagal mengakses kamera. Pastikan izin diberikan.';
+                    startWebcamButton.disabled = false; // Allow retry
+                }
+            });
+
+            continueToFormButton.addEventListener('click', () => {
+                // Stop webcam stream when moving to the next section
+                if (mediaStream) {
+                    mediaStream.getTracks().forEach(track => track.stop());
+                    webcamVideo.srcObject = null;
+                }
+                faceDetectionContainer.classList.add('hidden');
+                memberFormContainer.classList.remove('hidden');
+                memberFormContainer.classList.add('animate-fade-in-slide-up');
+            });
+            // --- End Face Detection Logic ---
+
 
             socialMediaYes.addEventListener('change', function() {
                 socialMediaInputContainer.classList.remove('hidden');
@@ -919,8 +1023,19 @@
 
                 domisiliInput.value = '';
 
+                // Stop webcam stream if active when resetting
+                if (mediaStream) {
+                    mediaStream.getTracks().forEach(track => track.stop());
+                    webcamVideo.srcObject = null;
+                    startWebcamButton.disabled = false; // Re-enable start webcam button
+                    continueToFormButton.disabled = true; // Disable continue to form button
+                    faceDetectionMessage.textContent = 'Menunggu akses kamera...';
+                }
+
                 memberFormContainer.classList.add('hidden');
                 memberFormContainer.classList.remove('animate-fade-in-slide-up');
+                faceDetectionContainer.classList.add('hidden'); // Ensure face detection is hidden
+                faceDetectionContainer.classList.remove('animate-fade-in-slide-up');
 
                 rulesContainer.classList.remove('hidden');
                 rulesContainer.classList.add('animate-fade-in-slide-up');
