@@ -20,7 +20,7 @@
             padding: 20px;
             margin: 0;
             display: flex;
-            flex-direction: column;
+            flex-direction: column; /* Changed to column to allow footer at bottom */
             justify-content: center;
             align-items: center;
             min-height: 100vh;
@@ -35,8 +35,8 @@
             max-width: 700px;
             padding: 0 10px;
             box-sizing: border-box;
-            flex-grow: 1;
-            justify-content: center;
+            flex-grow: 1; /* Allow content to grow and push footer down */
+            justify-content: center; /* Center content vertically if space allows */
         }
         .container {
             background-color: rgba(255, 255, 255, 0.95);
@@ -132,7 +132,7 @@
             align-items: center;
             justify-content: center;
             text-decoration: none;
-            color: white;
+            color: white; /* Default white text for all custom buttons */
             letter-spacing: 0.5px;
         }
         .btn:hover {
@@ -199,66 +199,6 @@
             background-image: linear-gradient(to right, #047857, #15803d);
         }
 
-        /* Livechat Button */
-        .btn-livechat-bubble {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background-color: #f59e0b;
-            background-image: linear-gradient(to bottom right, #f59e0b, #fbbf24);
-            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.6);
-            color: white;
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-        }
-        .btn-livechat-bubble:hover {
-            transform: scale(1.1);
-            background-color: #d97706;
-            background-image: linear-gradient(to bottom right, #d97706, #fcd34d);
-            box-shadow: 0 12px 25px rgba(245, 158, 11, 0.7);
-        }
-        .btn-livechat-bubble:active {
-            transform: scale(1.0);
-            box-shadow: 0 6px 15px rgba(245, 158, 11, 0.5);
-        }
-        .btn-livechat-bubble svg {
-            width: 30px;
-            height: 30px;
-            fill: currentColor;
-        }
-        /* Livechat Floating Bubble */
-        .livechat-bubble-container {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 10px;
-        }
-        .livechat-text-bubble {
-            background-color: #fff;
-            color: #333;
-            padding: 10px 15px;
-            border-radius: 15px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            opacity: 0;
-            transform: translateY(10px);
-            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
-            pointer-events: none;
-            white-space: nowrap;
-        }
-        .livechat-bubble-container:hover .livechat-text-bubble {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
 
         /* Community Social Media Buttons Container */
         .community-social-media-links {
@@ -293,6 +233,68 @@
             .community-social-media-links .btn-social-media {
                 flex-basis: calc(50% - 4px);
             }
+        }
+
+        /* Livechat Bubble Styles */
+        .livechat-bubble-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+        }
+
+        .livechat-text-bubble {
+            background-color: #fff;
+            color: #333;
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .livechat-bubble-container:hover .livechat-text-bubble {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .btn-livechat-bubble {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #f59e0b;
+            background-image: linear-gradient(to bottom right, #f59e0b, #fbbf24);
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.6);
+            color: white;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        }
+        .btn-livechat-bubble:hover {
+            transform: scale(1.1);
+            background-color: #d97706;
+            background-image: linear-gradient(to bottom right, #d97706, #fcd34d);
+            box-shadow: 0 12px 25px rgba(245, 158, 11, 0.7);
+        }
+        .btn-livechat-bubble:active {
+            transform: scale(1.0);
+            box-shadow: 0 6px 15px rgba(245, 158, 11, 0.5);
+        }
+        .btn-livechat-bubble svg {
+            width: 30px;
+            height: 30px;
+            fill: currentColor;
         }
 
         .hidden {
@@ -560,15 +562,15 @@
         }
         #webcamVideo {
             width: 100%;
-            max-width: 400px; /* Limit video width */
+            max-width: 400px;
             height: auto;
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
             background-color: #000;
             margin: 20px auto;
             display: block;
-            border: 4px solid #cfd8dc; /* Default border for webcam */
-            transition: border-color 0.5s ease-in-out; /* Smooth border transition */
+            border: 4px solid #cfd8dc;
+            transition: border-color 0.5s ease-in-out;
         }
         #faceDetectionMessage {
             margin-top: 15px;
@@ -578,7 +580,7 @@
         }
         #startWebcamButton {
             margin-top: 20px;
-            background-color: #3b82f6; /* Blue */
+            background-color: #3b82f6;
             background-image: linear-gradient(to right, #3b82f6, #2563eb);
         }
         #startWebcamButton:hover {
@@ -587,7 +589,7 @@
         }
         #continueToFormButton {
             margin-top: 20px;
-            background-color: #10b981; /* Green */
+            background-color: #10b981;
             background-image: linear-gradient(to right, #10b981, #34d399);
         }
         #continueToFormButton:hover {
@@ -717,6 +719,13 @@
                             <option value="Joko">Joko</option>
                             <option value="Citra">Citra</option>
                             <option value="Mey">Mey</option>
+                            <option value="Vandhu">Vandhu</option>
+                            <option value="Ardiansyah">Ardiansyah</option>
+                            <option value="Eza">Eza</option>
+                            <option value="Guntur">Guntur</option>
+                            <option value="Wale">Wale</option>
+                            <option value="Manda">Manda</option>
+                            <option value="Zarah">Zarah</option>
                         </select>
                     </div>
 
@@ -824,7 +833,7 @@
 
             let currentMemberNickname = '';
             let mediaStream = null;
-            let faceDetectionTimeoutId = null; // To hold the timeout for simulated detection
+            let faceDetectionTimeoutId = null;
 
 
             const testerQrData = {
@@ -834,7 +843,14 @@
                 "Thomas": "https://wa.me/6281374402822",
                 "Joko": "https://wa.me/6289514915776",
                 "Citra": "https://wa.me/6283825756494",
-                "Mey": "https://wa.me/6287704534610"
+                "Mey": "https://wa.me/6287704534610",
+                "Vandhu": "https://wa.me/6281371412119", // Placeholder for Vandhu
+                "Ardiansyah": "https://wa.me/6287745673345", // Placeholder for Ardiansyah
+                "Eza": "https://wa.me/6289517090040", // Placeholder for Eza
+                "Guntur": "https://wa.me/628976681624", // Placeholder for Guntur
+                "Wale": "https://wa.me/6282276260740", // Placeholder for Wale
+                "Manda": "https://wa.me/6281315100715", // Placeholder for Manda
+                "Zarah": "https://wa.me/6281342620907" // Placeholder for Zahra
             };
 
             function showNotification(title, message, isError, qrValue = null, showResetButton = true) {
@@ -918,13 +934,13 @@
                     faceDetectionMessage.textContent = 'Menunggu akses kamera...';
                     startWebcamButton.disabled = false;
                     continueToFormButton.disabled = true;
-                    webcamVideo.style.borderColor = '#cfd8dc'; // Reset border color
-                    webcamVideo.style.borderWidth = '4px'; // Reset border width
-                    if (mediaStream) { // Ensure stream is stopped if somehow still active
+                    webcamVideo.style.borderColor = '#cfd8dc';
+                    webcamVideo.style.borderWidth = '4px';
+                    if (mediaStream) {
                         mediaStream.getTracks().forEach(track => track.stop());
                         webcamVideo.srcObject = null;
                     }
-                    if (faceDetectionTimeoutId) { // Clear any pending detection timeouts
+                    if (faceDetectionTimeoutId) {
                         clearTimeout(faceDetectionTimeoutId);
                         faceDetectionTimeoutId = null;
                     }
@@ -940,25 +956,25 @@
                     await webcamVideo.play();
 
                     faceDetectionMessage.textContent = 'Kamera aktif. Mencari wajah...';
-                    webcamVideo.style.borderColor = '#f59e0b'; // Amber border for "searching"
+                    webcamVideo.style.borderColor = '#f59e0b';
                     webcamVideo.style.borderWidth = '4px';
 
                     // Simulate face detection after 3 seconds
                     faceDetectionTimeoutId = setTimeout(() => {
                         faceDetectionMessage.textContent = 'Wajah Terdeteksi!';
-                        webcamVideo.style.borderColor = '#10b981'; // Green border for "detected"
+                        webcamVideo.style.borderColor = '#10b981';
                         webcamVideo.style.borderWidth = '4px';
-                        continueToFormButton.disabled = false; // Enable continue button
-                        faceDetectionTimeoutId = null; // Clear timeout ID
-                    }, 3000); // 3 seconds for simulated detection
+                        continueToFormButton.disabled = false;
+                        faceDetectionTimeoutId = null;
+                    }, 3000);
 
                 } catch (err) {
                     console.error("Error accessing webcam: ", err);
                     faceDetectionMessage.textContent = 'Gagal mengakses kamera. Pastikan izin diberikan.';
-                    startWebcamButton.disabled = false; // Allow retry
-                    webcamVideo.style.borderColor = '#ef4444'; // Red border for error
+                    startWebcamButton.disabled = false;
+                    webcamVideo.style.borderColor = '#ef4444';
                     webcamVideo.style.borderWidth = '4px';
-                    if (faceDetectionTimeoutId) { // Clear any pending timeout on error
+                    if (faceDetectionTimeoutId) {
                         clearTimeout(faceDetectionTimeoutId);
                         faceDetectionTimeoutId = null;
                     }
@@ -970,7 +986,7 @@
                     mediaStream.getTracks().forEach(track => track.stop());
                     webcamVideo.srcObject = null;
                 }
-                if (faceDetectionTimeoutId) { // Clear any pending detection timeouts
+                if (faceDetectionTimeoutId) {
                     clearTimeout(faceDetectionTimeoutId);
                     faceDetectionTimeoutId = null;
                 }
@@ -1062,7 +1078,6 @@
 
                 domisiliInput.value = '';
 
-                // Stop webcam stream if active when resetting
                 if (mediaStream) {
                     mediaStream.getTracks().forEach(track => track.stop());
                     webcamVideo.srcObject = null;
