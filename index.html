@@ -245,12 +245,8 @@
             transform: rotate(180deg) scale(1.1);
         }
         .qr-code-container {
-            margin-top: 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            gap: 15px;
+            margin-top: 20px;
+            display: inline-block;
         }
         .loading-spinner {
             border: 4px solid rgba(255, 255, 255, 0.4);
@@ -529,19 +525,29 @@
         </div>
     </div>
 
-    <!-- Modal Notification -->
+    <!-- Modal Notification -- UPDATED STRUCTURE -->
     <div id="notificationModalOverlay" class="modal-overlay">
         <div class="modal-content">
             <button id="modalCloseBtn" class="modal-close-btn">&times;</button>
             <h3 id="modalTitle" class="text-2xl font-bold mb-4"></h3>
             <p id="modalMessage" class="text-gray-600 mb-6"></p>
-            <div id="modalQrCodeContainer" class="qr-code-container"></div>
-            <button id="modalResetFormButton" class="btn btn-secondary mt-5">Isi Formulir Lagi</button>
+            
+            <!-- QR Section (initially hidden) -->
+            <div id="qrSection" class="hidden text-center">
+                <div id="modalQrCodeContainer" class="qr-code-container"></div>
+                <a id="downloadQrButton" class="btn btn-primary mt-4 inline-block" style="width:auto; padding: 10px 20px;" download="qr-code-x5.png">Download QR</a>
+            </div>
+
+            <!-- Button Container -->
+            <div class="mt-5 flex flex-col sm:flex-row gap-4 justify-center">
+                <button id="scanQrButton" class="btn btn-continue hidden" style="background-image: linear-gradient(to right, #10b981, #34d399);">Scan QR</button>
+                <button id="modalResetFormButton" class="btn btn-secondary">Isi Formulir Lagi</button>
+            </div>
         </div>
     </div>
 
     <footer class="footer">
-        <p>&copy; 2017-2024 XFIVECommunity. All rights reserved.</p>
+        <p>&copy; 2017-2025 XFIVECommunity. All rights reserved.</p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
@@ -577,12 +583,17 @@
         const modalCloseBtn = document.getElementById('modalCloseBtn');
         const modalTitle = document.getElementById('modalTitle');
         const modalMessage = document.getElementById('modalMessage');
+        const qrSection = document.getElementById('qrSection');
         const modalQrCodeContainer = document.getElementById('modalQrCodeContainer');
+        const downloadQrButton = document.getElementById('downloadQrButton');
+        const scanQrButton = document.getElementById('scanQrButton');
         const modalResetFormButton = document.getElementById('modalResetFormButton');
 
         // --- State and Data ---
         let mediaStream = null;
         let faceDetectionTimeoutId = null;
+        let currentQrValue = null;
+        let currentMemberName = '';
         const testerQrData = {
             "Ramsky": "https://wa.me/6285693393707", "Fadel": "https://wa.me/6282173876492",
             "Fajar": "https://wa.me/6287750639436", "Thomas": "https://wa.me/6281374402822",
@@ -594,17 +605,41 @@
         const googleAppsScriptURL = 'https://script.google.com/macros/s/AKfycbwEUL4YkEYBfaIl1-T2jYueJorhn5SyS2q1YLpse5bhlleULPXIy3TjnwkputvVm156gg/exec';
 
         // --- Functions ---
+        const setupCanvas = () => {
+            if (!scratchCanvas) return;
+            const ctx = scratchCanvas.getContext('2d');
+            scratchCanvas.width = scratchCardWrapper.clientWidth;
+            scratchCanvas.height = scratchCardWrapper.clientHeight;
+            const gradient = ctx.createLinearGradient(0, 0, scratchCanvas.width, scratchCanvas.height);
+            gradient.addColorStop(0, '#8b5cf6');
+            gradient.addColorStop(1, '#6366f1');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, scratchCanvas.width, scratchCanvas.height);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.font = 'bold 24px "Inter", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('GOSOK DI SINI', scratchCanvas.width / 2, scratchCanvas.height / 2);
+            ctx.globalCompositeOperation = 'destination-out';
+            scratchCanvas.style.opacity = '1';
+            scratchCanvas.style.pointerEvents = 'auto';
+        };
+
         function showNotification(title, message, isError = false, qrValue = null) {
             modalTitle.textContent = title;
             modalMessage.innerHTML = message;
-            modalQrCodeContainer.innerHTML = '';
             
-            if (qrValue) {
-                new QRious({
-                    element: modalQrCodeContainer,
-                    value: qrValue, size: 200,
-                    background: 'white', foreground: '#6366f1'
-                });
+            // Reset modal state
+            qrSection.classList.add('hidden');
+            scanQrButton.classList.add('hidden');
+            modalResetFormButton.classList.remove('hidden');
+
+            if (isError) {
+                // Handle error
+            } else {
+                // On success, store QR value and show Scan button
+                currentQrValue = qrValue;
+                scanQrButton.classList.remove('hidden');
             }
             notificationModalOverlay.classList.add('show');
         }
@@ -622,6 +657,7 @@
             rulesContainer.classList.remove('hidden');
             agreeToRulesCheckbox.checked = false;
             continueButton.disabled = true;
+            setupCanvas(); // Redraw scratch card
         }
 
         // --- Event Listeners ---
@@ -665,21 +701,6 @@
         if (scratchCanvas) {
             const ctx = scratchCanvas.getContext('2d');
             let isScratching = false;
-            const setupCanvas = () => {
-                scratchCanvas.width = scratchCardWrapper.clientWidth;
-                scratchCanvas.height = scratchCardWrapper.clientHeight;
-                const gradient = ctx.createLinearGradient(0, 0, scratchCanvas.width, scratchCanvas.height);
-                gradient.addColorStop(0, '#8b5cf6');
-                gradient.addColorStop(1, '#6366f1');
-                ctx.fillStyle = gradient;
-                ctx.fillRect(0, 0, scratchCanvas.width, scratchCanvas.height);
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-                ctx.font = 'bold 24px "Inter", sans-serif';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText('GOSOK DI SINI', scratchCanvas.width / 2, scratchCanvas.height / 2);
-                ctx.globalCompositeOperation = 'destination-out';
-            };
             const getScratchPosition = (e) => {
                 const rect = scratchCanvas.getBoundingClientRect();
                 const clientX = e.clientX || e.touches[0].clientX;
@@ -740,18 +761,19 @@
             const data = Object.fromEntries(formData.entries());
             data.type = 'registration';
             if (data.hasSocialMedia === 'Tidak') data.sosialMediaName = 'Tidak ada';
+            currentMemberName = data.namaPanggilan; // Store name for download filename
 
             try {
                 await fetch(googleAppsScriptURL, {
                     method: 'POST',
-                    mode: 'no-cors', // Important for this type of submission
+                    mode: 'no-cors',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
                 
                 const testerName = data.tester;
                 const qrValue = testerQrData[testerName] || `Selamat datang di X5, ${data.namaPanggilan}!`;
-                const successMessage = `Terima kasih, <strong>${data.namaPanggilan}</strong>! Data Anda berhasil dikirim. Silakan scan QR Code di bawah untuk menghubungi Tester Anda, <strong>${testerName}</strong>.`;
+                const successMessage = `Terima kasih, <strong>${data.namaPanggilan}</strong>! Data Anda berhasil dikirim.`;
                 
                 showNotification('Pendaftaran Berhasil!', successMessage, false, qrValue);
                 memberFormContainer.classList.add('hidden');
@@ -767,6 +789,26 @@
         });
 
         // Modal Controls
+        scanQrButton.addEventListener('click', () => {
+            if (currentQrValue) {
+                modalQrCodeContainer.innerHTML = '';
+                new QRious({
+                    element: modalQrCodeContainer,
+                    value: currentQrValue,
+                    size: 200,
+                    background: 'white',
+                    foreground: '#6366f1'
+                });
+                
+                // Set download link
+                const qrCanvasElement = modalQrCodeContainer.querySelector('canvas');
+                downloadQrButton.href = qrCanvasElement.toDataURL('image/png');
+                downloadQrButton.download = `qr-code-x5-${currentMemberName.replace(/\s+/g, '-')}.png`;
+
+                qrSection.classList.remove('hidden');
+                scanQrButton.classList.add('hidden'); // Hide after clicking
+            }
+        });
         modalCloseBtn.addEventListener('click', hideNotification);
         modalResetFormButton.addEventListener('click', resetToStart);
         notificationModalOverlay.addEventListener('click', (e) => {
