@@ -360,6 +360,8 @@
             height: 100%;
             border-radius: 16px;
             cursor: grab;
+            /* By default, canvas receives events */
+            pointer-events: auto; 
         }
         #scratchCanvas:active {
             cursor: grabbing;
@@ -606,12 +608,12 @@
             scratchCardContainer.classList.remove('hidden');
         });
 
-        // --- Step 3: Scratch Card Verification ---
+        // --- Step 3: Scratch Card Verification (REVISED LOGIC) ---
         if (scratchCanvas) {
             const ctx = scratchCanvas.getContext('2d');
             let isScratching = false;
 
-            function resizeCanvas() {
+            const setupCanvas = () => {
                 scratchCanvas.width = scratchCardWrapper.clientWidth;
                 scratchCanvas.height = scratchCardWrapper.clientHeight;
                 
@@ -626,31 +628,66 @@
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText('GOSOK DI SINI', scratchCanvas.width / 2, scratchCanvas.height / 2);
-            }
 
-            function scratch(e) {
+                // Ensure composite operation is correct for drawing on top
+                ctx.globalCompositeOperation = 'source-over';
+            };
+
+            const getScratchPosition = (e) => {
+                const rect = scratchCanvas.getBoundingClientRect();
+                const scaleX = scratchCanvas.width / rect.width;
+                const scaleY = scratchCanvas.height / rect.height;
+                const clientX = e.clientX || e.touches[0].clientX;
+                const clientY = e.clientY || e.touches[0].clientY;
+                return {
+                    x: (clientX - rect.left) * scaleX,
+                    y: (clientY - rect.top) * scaleY,
+                };
+            };
+            
+            const checkPixelsScratched = () => {
+                const pixels = ctx.getImageData(0, 0, scratchCanvas.width, scratchCanvas.height);
+                const totalPixels = pixels.width * pixels.height;
+                let transparentPixels = 0;
+                // Check alpha value of each pixel (every 4th item in the data array)
+                for (let i = 3; i < pixels.data.length; i += 4) {
+                    if (pixels.data[i] === 0) {
+                        transparentPixels++;
+                    }
+                }
+                return (transparentPixels / totalPixels) * 100;
+            };
+
+            const scratch = (e) => {
                 if (!isScratching) return;
                 e.preventDefault();
-                const rect = scratchCanvas.getBoundingClientRect();
-                const x = (e.clientX || e.touches[0].clientX) - rect.left;
-                const y = (e.clientY || e.touches[0].clientY) - rect.top;
-
+                
+                const pos = getScratchPosition(e);
+                
                 ctx.globalCompositeOperation = 'destination-out';
                 ctx.beginPath();
-                ctx.arc(x, y, 25, 0, Math.PI * 2, false);
+                ctx.arc(pos.x, pos.y, 30, 0, Math.PI * 2, false); // Increased radius
                 ctx.fill();
-            }
 
-            window.addEventListener('resize', resizeCanvas);
-            scratchCanvas.addEventListener('mousedown', () => { isScratching = true; });
+                // Check if enough has been scratched
+                if (checkPixelsScratched() > 60) {
+                    // Make canvas non-interactive and fade out
+                    scratchCanvas.style.pointerEvents = 'none';
+                    scratchCanvas.style.transition = 'opacity 0.5s';
+                    scratchCanvas.style.opacity = '0';
+                }
+            };
+
+            window.addEventListener('resize', setupCanvas);
+            scratchCanvas.addEventListener('mousedown', (e) => { isScratching = true; scratch(e); });
             scratchCanvas.addEventListener('mouseup', () => { isScratching = false; });
             scratchCanvas.addEventListener('mouseleave', () => { isScratching = false; });
             scratchCanvas.addEventListener('mousemove', scratch);
-            scratchCanvas.addEventListener('touchstart', (e) => { e.preventDefault(); isScratching = true; });
+            scratchCanvas.addEventListener('touchstart', (e) => { isScratching = true; scratch(e); }, { passive: false });
             scratchCanvas.addEventListener('touchend', () => { isScratching = false; });
-            scratchCanvas.addEventListener('touchmove', scratch);
+            scratchCanvas.addEventListener('touchmove', scratch, { passive: false });
 
-            resizeCanvas();
+            setupCanvas();
         }
 
         verifyPasswordButton.addEventListener('click', function() {
