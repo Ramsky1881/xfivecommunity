@@ -203,9 +203,11 @@
             z-index: 1000;
             opacity: 0;
             transition: opacity 0.4s ease-out;
+            pointer-events: none;
         }
         .modal-overlay.show {
             opacity: 1;
+            pointer-events: auto;
         }
         .modal-content {
             background-color: rgba(255, 255, 255, 0.98);
@@ -403,7 +405,7 @@
 <body>
     <div class="main-content-wrapper">
         <div class="container">
-            <!-- Rules Section - RESTRUCTURED AND FIXED -->
+            <!-- Rules Section -->
             <div id="rulesContainer">
                 <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">Peraturan Komunitas X5</h2>
                 <div class="rules-section">
@@ -452,7 +454,7 @@
                 <div id="scratchCardWrapper">
                     <canvas id="scratchCanvas"></canvas>
                     <div id="hiddenContent">
-                        <label for="secretPassword" class="font-semibold text-gray-700 mb-2">Sapaan Komunitas:</label>
+                        <label for="secretPassword" class="font-semibold text-gray-700 mb-2">Kata Sandi Komunitas:</label>
                         <input type="text" id="secretPassword" placeholder="Masukkan kata sandi...">
                         <button type="button" id="verifyPasswordButton" class="btn btn-primary">Verifikasi</button>
                         <p id="passwordError" class="text-red-500 text-sm mt-1 hidden">Kata sandi salah!</p>
@@ -464,6 +466,7 @@
             <div id="memberFormContainer" class="hidden">
                 <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">Formulir Pendataan Member</h1>
                 <form id="memberForm">
+                    <!-- Form fields here -->
                     <div class="form-group">
                         <label for="namaPanggilan">Nama Panggilan:</label>
                         <input type="text" id="namaPanggilan" name="namaPanggilan" required>
@@ -526,10 +529,17 @@
         </div>
     </div>
 
-    <!-- Modal and Footer can remain the same -->
-    <div id="notificationModalOverlay" class="modal-overlay hidden">
-        <!-- ... modal content ... -->
+    <!-- Modal Notification -->
+    <div id="notificationModalOverlay" class="modal-overlay">
+        <div class="modal-content">
+            <button id="modalCloseBtn" class="modal-close-btn">&times;</button>
+            <h3 id="modalTitle" class="text-2xl font-bold mb-4"></h3>
+            <p id="modalMessage" class="text-gray-600 mb-6"></p>
+            <div id="modalQrCodeContainer" class="qr-code-container"></div>
+            <button id="modalResetFormButton" class="btn btn-secondary mt-5">Isi Formulir Lagi</button>
+        </div>
     </div>
+
     <footer class="footer">
         <p>&copy; 2017-2024 XFIVECommunity. All rights reserved.</p>
     </footer>
@@ -537,46 +547,94 @@
     <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Get all elements
+        // --- Element Selectors ---
         const rulesContainer = document.getElementById('rulesContainer');
         const faceDetectionContainer = document.getElementById('faceDetectionContainer');
         const scratchCardContainer = document.getElementById('scratchCardContainer');
         const memberFormContainer = document.getElementById('memberFormContainer');
-
         const agreeToRulesCheckbox = document.getElementById('agreeToRules');
         const continueButton = document.getElementById('continueButton');
-
         const webcamVideo = document.getElementById('webcamVideo');
         const faceDetectionMessage = document.getElementById('faceDetectionMessage');
         const startWebcamButton = document.getElementById('startWebcamButton');
         const continueToFormButton = document.getElementById('continueToFormButton');
-
-        // Scratch card elements
         const scratchCanvas = document.getElementById('scratchCanvas');
         const scratchCardWrapper = document.getElementById('scratchCardWrapper');
         const verifyPasswordButton = document.getElementById('verifyPasswordButton');
         const passwordInput = document.getElementById('secretPassword');
         const passwordError = document.getElementById('passwordError');
-        
         const memberForm = document.getElementById('memberForm');
-        // ... other form elements
+        const submitButton = document.getElementById('submitButton');
+        const buttonText = document.getElementById('buttonText');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const socialMediaYes = document.querySelector('input[name="hasSocialMedia"][value="Ya"]');
+        const socialMediaNo = document.querySelector('input[name="hasSocialMedia"][value="Tidak"]');
+        const socialMediaInputContainer = document.getElementById('socialMediaInputContainer');
+        const sosialMediaNameInput = document.getElementById('sosialMediaName');
+        
+        // Modal elements
+        const notificationModalOverlay = document.getElementById('notificationModalOverlay');
+        const modalCloseBtn = document.getElementById('modalCloseBtn');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMessage = document.getElementById('modalMessage');
+        const modalQrCodeContainer = document.getElementById('modalQrCodeContainer');
+        const modalResetFormButton = document.getElementById('modalResetFormButton');
 
+        // --- State and Data ---
         let mediaStream = null;
         let faceDetectionTimeoutId = null;
+        const testerQrData = {
+            "Ramsky": "https://wa.me/6285693393707", "Fadel": "https://wa.me/6282173876492",
+            "Fajar": "https://wa.me/6287750639436", "Thomas": "https://wa.me/6281374402822",
+            "Joko": "https://wa.me/6289514915776", "Citra": "https://wa.me/6283825756494",
+            "Mey": "https://wa.me/6287704534610", "Vandhu": "https://wa.me/6281371412119",
+            "Ardiansyah": "https://wa.me/6287745673345", "Eza": "https://wa.me/6289517090040",
+            "Wale": "https://wa.me/6282276260740", "Zarah": "https://wa.me/6281342620907"
+        };
+        const googleAppsScriptURL = 'https://script.google.com/macros/s/AKfycbwEUL4YkEYBfaIl1-T2jYueJorhn5SyS2q1YLpse5bhlleULPXIy3TjnwkputvVm156gg/exec';
 
-        // --- Step 1: Rules Agreement ---
-        agreeToRulesCheckbox.addEventListener('change', function() {
-            continueButton.disabled = !this.checked;
-        });
+        // --- Functions ---
+        function showNotification(title, message, isError = false, qrValue = null) {
+            modalTitle.textContent = title;
+            modalMessage.innerHTML = message;
+            modalQrCodeContainer.innerHTML = '';
+            
+            if (qrValue) {
+                new QRious({
+                    element: modalQrCodeContainer,
+                    value: qrValue, size: 200,
+                    background: 'white', foreground: '#6366f1'
+                });
+            }
+            notificationModalOverlay.classList.add('show');
+        }
 
-        continueButton.addEventListener('click', function() {
+        function hideNotification() {
+            notificationModalOverlay.classList.remove('show');
+        }
+
+        function resetToStart() {
+            hideNotification();
+            memberForm.reset();
+            socialMediaInputContainer.classList.add('hidden');
+            sosialMediaNameInput.required = false;
+            memberFormContainer.classList.add('hidden');
+            rulesContainer.classList.remove('hidden');
+            agreeToRulesCheckbox.checked = false;
+            continueButton.disabled = true;
+        }
+
+        // --- Event Listeners ---
+        // Step 1: Rules
+        agreeToRulesCheckbox.addEventListener('change', () => { continueButton.disabled = !agreeToRulesCheckbox.checked; });
+        continueButton.addEventListener('click', () => {
             if (agreeToRulesCheckbox.checked) {
                 rulesContainer.classList.add('hidden');
                 faceDetectionContainer.classList.remove('hidden');
             }
         });
 
-        // --- Step 2: Face Detection ---
+        // Step 2: Face Detection
         startWebcamButton.addEventListener('click', async () => {
             startWebcamButton.disabled = true;
             faceDetectionMessage.textContent = 'Memulai kamera...';
@@ -586,7 +644,6 @@
                 await webcamVideo.play();
                 faceDetectionMessage.textContent = 'Kamera aktif. Mencari wajah...';
                 webcamVideo.style.borderColor = '#f59e0b';
-
                 faceDetectionTimeoutId = setTimeout(() => {
                     faceDetectionMessage.textContent = 'Wajah Terdeteksi!';
                     webcamVideo.style.borderColor = '#10b981';
@@ -598,95 +655,63 @@
                 startWebcamButton.disabled = false;
             }
         });
-
         continueToFormButton.addEventListener('click', () => {
-            if (mediaStream) {
-                mediaStream.getTracks().forEach(track => track.stop());
-            }
+            if (mediaStream) mediaStream.getTracks().forEach(track => track.stop());
             faceDetectionContainer.classList.add('hidden');
             scratchCardContainer.classList.remove('hidden');
         });
 
-        // --- Step 3: Scratch Card Verification (FINAL REVISED LOGIC) ---
+        // Step 3: Scratch Card
         if (scratchCanvas) {
             const ctx = scratchCanvas.getContext('2d');
             let isScratching = false;
-
             const setupCanvas = () => {
                 scratchCanvas.width = scratchCardWrapper.clientWidth;
                 scratchCanvas.height = scratchCardWrapper.clientHeight;
-                
                 const gradient = ctx.createLinearGradient(0, 0, scratchCanvas.width, scratchCanvas.height);
                 gradient.addColorStop(0, '#8b5cf6');
                 gradient.addColorStop(1, '#6366f1');
                 ctx.fillStyle = gradient;
                 ctx.fillRect(0, 0, scratchCanvas.width, scratchCanvas.height);
-
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
                 ctx.font = 'bold 24px "Inter", sans-serif';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText('GOSOK DI SINI', scratchCanvas.width / 2, scratchCanvas.height / 2);
-                
-                // Set composite operation for scratching
                 ctx.globalCompositeOperation = 'destination-out';
             };
-
             const getScratchPosition = (e) => {
                 const rect = scratchCanvas.getBoundingClientRect();
                 const clientX = e.clientX || e.touches[0].clientX;
                 const clientY = e.clientY || e.touches[0].clientY;
-                return {
-                    x: clientX - rect.left,
-                    y: clientY - rect.top,
-                };
+                return { x: clientX - rect.left, y: clientY - rect.top };
             };
-            
             const scratch = (e) => {
                 if (!isScratching) return;
                 e.preventDefault();
-                
                 const pos = getScratchPosition(e);
-                
                 ctx.beginPath();
                 ctx.arc(pos.x, pos.y, 30, 0, Math.PI * 2, false);
                 ctx.fill();
             };
-
             const revealContent = () => {
-                // Make canvas non-interactive and fade out to reveal content below
                 scratchCanvas.style.pointerEvents = 'none';
                 scratchCanvas.style.transition = 'opacity 0.5s';
                 scratchCanvas.style.opacity = '0';
             };
-
-            const startScratch = (e) => {
-                isScratching = true;
-                scratch(e);
-            };
-
-            const endScratch = () => {
-                if (!isScratching) return;
-                isScratching = false;
-                // Reveal the content when user stops scratching
-                revealContent();
-            };
-
+            const startScratch = (e) => { isScratching = true; scratch(e); };
+            const endScratch = () => { if (!isScratching) return; isScratching = false; revealContent(); };
             window.addEventListener('resize', setupCanvas);
-            // Mouse events
             scratchCanvas.addEventListener('mousedown', startScratch);
             scratchCanvas.addEventListener('mouseup', endScratch);
             scratchCanvas.addEventListener('mouseleave', endScratch);
             scratchCanvas.addEventListener('mousemove', scratch);
-            // Touch events
             scratchCanvas.addEventListener('touchstart', startScratch, { passive: false });
             scratchCanvas.addEventListener('touchend', endScratch);
             scratchCanvas.addEventListener('touchmove', scratch, { passive: false });
-
             setupCanvas();
         }
-
-        verifyPasswordButton.addEventListener('click', function() {
+        verifyPasswordButton.addEventListener('click', () => {
             if (passwordInput.value.trim().toUpperCase() === 'X5') {
                 passwordError.classList.add('hidden');
                 scratchCardContainer.classList.add('hidden');
@@ -696,12 +721,7 @@
             }
         });
 
-        // --- Step 4: Form Submission Logic ---
-        const socialMediaYes = document.querySelector('input[name="hasSocialMedia"][value="Ya"]');
-        const socialMediaNo = document.querySelector('input[name="hasSocialMedia"][value="Tidak"]');
-        const socialMediaInputContainer = document.getElementById('socialMediaInputContainer');
-        const sosialMediaNameInput = document.getElementById('sosialMediaName');
-
+        // Step 4: Form Submission
         socialMediaYes.addEventListener('change', () => {
             socialMediaInputContainer.classList.remove('hidden');
             sosialMediaNameInput.required = true;
@@ -710,21 +730,48 @@
             socialMediaInputContainer.classList.add('hidden');
             sosialMediaNameInput.required = false;
         });
-
         memberForm.addEventListener('submit', async function(event) {
             event.preventDefault();
-            // Your existing form submission logic can go here
-            console.log('Form submitted!');
-            // Example: show a success message
-            alert('Terima kasih! Data Anda akan kami proses.');
-            // Ideally, you would replace alert with your custom modal logic
-            memberForm.reset();
-            memberFormContainer.classList.add('hidden');
-            rulesContainer.classList.remove('hidden');
-            agreeToRulesCheckbox.checked = false;
-            continueButton.disabled = true;
+            submitButton.disabled = true;
+            buttonText.textContent = 'Mengirim...';
+            loadingSpinner.classList.remove('hidden');
+
+            const formData = new FormData(memberForm);
+            const data = Object.fromEntries(formData.entries());
+            data.type = 'registration';
+            if (data.hasSocialMedia === 'Tidak') data.sosialMediaName = 'Tidak ada';
+
+            try {
+                await fetch(googleAppsScriptURL, {
+                    method: 'POST',
+                    mode: 'no-cors', // Important for this type of submission
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const testerName = data.tester;
+                const qrValue = testerQrData[testerName] || `Selamat datang di X5, ${data.namaPanggilan}!`;
+                const successMessage = `Terima kasih, <strong>${data.namaPanggilan}</strong>! Data Anda berhasil dikirim. Silakan scan QR Code di bawah untuk menghubungi Tester Anda, <strong>${testerName}</strong>.`;
+                
+                showNotification('Pendaftaran Berhasil!', successMessage, false, qrValue);
+                memberFormContainer.classList.add('hidden');
+
+            } catch (error) {
+                console.error('Error submitting form:', error);
+                showNotification('Terjadi Kesalahan', 'Maaf, data Anda gagal dikirim. Silakan coba lagi nanti.', true);
+            } finally {
+                submitButton.disabled = false;
+                buttonText.textContent = 'Kirim Data';
+                loadingSpinner.classList.add('hidden');
+            }
         });
 
+        // Modal Controls
+        modalCloseBtn.addEventListener('click', hideNotification);
+        modalResetFormButton.addEventListener('click', resetToStart);
+        notificationModalOverlay.addEventListener('click', (e) => {
+            if (e.target === notificationModalOverlay) hideNotification();
+        });
     });
     </script>
 </body>
