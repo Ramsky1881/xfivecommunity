@@ -360,7 +360,6 @@
             height: 100%;
             border-radius: 16px;
             cursor: grab;
-            /* By default, canvas receives events */
             pointer-events: auto; 
         }
         #scratchCanvas:active {
@@ -608,7 +607,7 @@
             scratchCardContainer.classList.remove('hidden');
         });
 
-        // --- Step 3: Scratch Card Verification (REVISED LOGIC) ---
+        // --- Step 3: Scratch Card Verification (FINAL REVISED LOGIC) ---
         if (scratchCanvas) {
             const ctx = scratchCanvas.getContext('2d');
             let isScratching = false;
@@ -628,63 +627,60 @@
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillText('GOSOK DI SINI', scratchCanvas.width / 2, scratchCanvas.height / 2);
-
-                // Ensure composite operation is correct for drawing on top
-                ctx.globalCompositeOperation = 'source-over';
+                
+                // Set composite operation for scratching
+                ctx.globalCompositeOperation = 'destination-out';
             };
 
             const getScratchPosition = (e) => {
                 const rect = scratchCanvas.getBoundingClientRect();
-                const scaleX = scratchCanvas.width / rect.width;
-                const scaleY = scratchCanvas.height / rect.height;
                 const clientX = e.clientX || e.touches[0].clientX;
                 const clientY = e.clientY || e.touches[0].clientY;
                 return {
-                    x: (clientX - rect.left) * scaleX,
-                    y: (clientY - rect.top) * scaleY,
+                    x: clientX - rect.left,
+                    y: clientY - rect.top,
                 };
             };
             
-            const checkPixelsScratched = () => {
-                const pixels = ctx.getImageData(0, 0, scratchCanvas.width, scratchCanvas.height);
-                const totalPixels = pixels.width * pixels.height;
-                let transparentPixels = 0;
-                // Check alpha value of each pixel (every 4th item in the data array)
-                for (let i = 3; i < pixels.data.length; i += 4) {
-                    if (pixels.data[i] === 0) {
-                        transparentPixels++;
-                    }
-                }
-                return (transparentPixels / totalPixels) * 100;
-            };
-
             const scratch = (e) => {
                 if (!isScratching) return;
                 e.preventDefault();
                 
                 const pos = getScratchPosition(e);
                 
-                ctx.globalCompositeOperation = 'destination-out';
                 ctx.beginPath();
-                ctx.arc(pos.x, pos.y, 30, 0, Math.PI * 2, false); // Increased radius
+                ctx.arc(pos.x, pos.y, 30, 0, Math.PI * 2, false);
                 ctx.fill();
+            };
 
-                // Check if enough has been scratched
-                if (checkPixelsScratched() > 60) {
-                    // Make canvas non-interactive and fade out
-                    scratchCanvas.style.pointerEvents = 'none';
-                    scratchCanvas.style.transition = 'opacity 0.5s';
-                    scratchCanvas.style.opacity = '0';
-                }
+            const revealContent = () => {
+                // Make canvas non-interactive and fade out to reveal content below
+                scratchCanvas.style.pointerEvents = 'none';
+                scratchCanvas.style.transition = 'opacity 0.5s';
+                scratchCanvas.style.opacity = '0';
+            };
+
+            const startScratch = (e) => {
+                isScratching = true;
+                scratch(e);
+            };
+
+            const endScratch = () => {
+                if (!isScratching) return;
+                isScratching = false;
+                // Reveal the content when user stops scratching
+                revealContent();
             };
 
             window.addEventListener('resize', setupCanvas);
-            scratchCanvas.addEventListener('mousedown', (e) => { isScratching = true; scratch(e); });
-            scratchCanvas.addEventListener('mouseup', () => { isScratching = false; });
-            scratchCanvas.addEventListener('mouseleave', () => { isScratching = false; });
+            // Mouse events
+            scratchCanvas.addEventListener('mousedown', startScratch);
+            scratchCanvas.addEventListener('mouseup', endScratch);
+            scratchCanvas.addEventListener('mouseleave', endScratch);
             scratchCanvas.addEventListener('mousemove', scratch);
-            scratchCanvas.addEventListener('touchstart', (e) => { isScratching = true; scratch(e); }, { passive: false });
-            scratchCanvas.addEventListener('touchend', () => { isScratching = false; });
+            // Touch events
+            scratchCanvas.addEventListener('touchstart', startScratch, { passive: false });
+            scratchCanvas.addEventListener('touchend', endScratch);
             scratchCanvas.addEventListener('touchmove', scratch, { passive: false });
 
             setupCanvas();
