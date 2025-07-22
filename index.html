@@ -532,15 +532,11 @@
             <h3 id="modalTitle" class="text-2xl font-bold mb-4"></h3>
             <p id="modalMessage" class="text-gray-600 mb-6"></p>
             
-            <!-- QR Section (initially hidden) -->
-            <div id="qrSection" class="hidden text-center">
-                <div id="modalQrCodeContainer" class="qr-code-container"></div>
-                <a id="downloadQrButton" class="btn btn-primary mt-4 inline-block" style="width:auto; padding: 10px 20px;" download="qr-code-x5.png">Download QR</a>
-            </div>
+            <div id="modalQrCodeContainer" class="qr-code-container"></div>
 
             <!-- Button Container -->
             <div class="mt-5 flex flex-col sm:flex-row gap-4 justify-center">
-                <button id="scanQrButton" class="btn btn-continue hidden" style="background-image: linear-gradient(to right, #10b981, #34d399);">Scan QR</button>
+                <a id="downloadQrButton" class="btn btn-primary hidden" style="width:auto; padding: 10px 20px;" download="qr-code-x5.png">Download QR</a>
                 <button id="modalResetFormButton" class="btn btn-secondary">Isi Formulir Lagi</button>
             </div>
         </div>
@@ -583,16 +579,13 @@
         const modalCloseBtn = document.getElementById('modalCloseBtn');
         const modalTitle = document.getElementById('modalTitle');
         const modalMessage = document.getElementById('modalMessage');
-        const qrSection = document.getElementById('qrSection');
         const modalQrCodeContainer = document.getElementById('modalQrCodeContainer');
         const downloadQrButton = document.getElementById('downloadQrButton');
-        const scanQrButton = document.getElementById('scanQrButton');
         const modalResetFormButton = document.getElementById('modalResetFormButton');
 
         // --- State and Data ---
         let mediaStream = null;
         let faceDetectionTimeoutId = null;
-        let currentQrValue = null;
         let currentMemberName = '';
         const testerQrData = {
             "Ramsky": "https://wa.me/6285693393707", "Fadel": "https://wa.me/6282173876492",
@@ -630,16 +623,24 @@
             modalMessage.innerHTML = message;
             
             // Reset modal state
-            qrSection.classList.add('hidden');
-            scanQrButton.classList.add('hidden');
-            modalResetFormButton.classList.remove('hidden');
+            modalQrCodeContainer.innerHTML = '';
+            downloadQrButton.classList.add('hidden');
 
-            if (isError) {
-                // Handle error
-            } else {
-                // On success, store QR value and show Scan button
-                currentQrValue = qrValue;
-                scanQrButton.classList.remove('hidden');
+            if (!isError && qrValue) {
+                // On success, show QR and download button
+                const qrCanvas = document.createElement('canvas');
+                modalQrCodeContainer.appendChild(qrCanvas);
+                new QRious({
+                    element: qrCanvas,
+                    value: qrValue,
+                    size: 200,
+                    background: 'white',
+                    foreground: '#6366f1'
+                });
+                
+                downloadQrButton.href = qrCanvas.toDataURL('image/png');
+                downloadQrButton.download = `qr-code-x5-${currentMemberName.replace(/\s+/g, '-')}.png`;
+                downloadQrButton.classList.remove('hidden');
             }
             notificationModalOverlay.classList.add('show');
         }
@@ -773,7 +774,7 @@
                 
                 const testerName = data.tester;
                 const qrValue = testerQrData[testerName] || `Selamat datang di X5, ${data.namaPanggilan}!`;
-                const successMessage = `Terima kasih, <strong>${data.namaPanggilan}</strong>! Data Anda berhasil dikirim.`;
+                const successMessage = `Terima kasih, <strong>${data.namaPanggilan}</strong>! Data Anda berhasil dikirim. Silakan scan QR ini untuk menghubungi tester kalian.`;
                 
                 showNotification('Pendaftaran Berhasil!', successMessage, false, qrValue);
                 memberFormContainer.classList.add('hidden');
@@ -789,26 +790,6 @@
         });
 
         // Modal Controls
-        scanQrButton.addEventListener('click', () => {
-            if (currentQrValue) {
-                modalQrCodeContainer.innerHTML = '';
-                new QRious({
-                    element: modalQrCodeContainer,
-                    value: currentQrValue,
-                    size: 200,
-                    background: 'white',
-                    foreground: '#6366f1'
-                });
-                
-                // Set download link
-                const qrCanvasElement = modalQrCodeContainer.querySelector('canvas');
-                downloadQrButton.href = qrCanvasElement.toDataURL('image/png');
-                downloadQrButton.download = `qr-code-x5-${currentMemberName.replace(/\s+/g, '-')}.png`;
-
-                qrSection.classList.remove('hidden');
-                scanQrButton.classList.add('hidden'); // Hide after clicking
-            }
-        });
         modalCloseBtn.addEventListener('click', hideNotification);
         modalResetFormButton.addEventListener('click', resetToStart);
         notificationModalOverlay.addEventListener('click', (e) => {
