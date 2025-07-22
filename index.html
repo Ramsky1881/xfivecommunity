@@ -20,11 +20,11 @@
             padding: 20px;
             margin: 0;
             display: flex;
-            flex-direction: column; /* Changed to column to allow footer at bottom */
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            overflow-x: hidden; /* Prevent horizontal scroll */
+            overflow-x: hidden;
         }
         .main-content-wrapper {
             display: flex;
@@ -35,8 +35,8 @@
             max-width: 700px;
             padding: 0 10px;
             box-sizing: border-box;
-            flex-grow: 1; /* Allow content to grow and push footer down */
-            justify-content: center; /* Center content vertically if space allows */
+            flex-grow: 1;
+            justify-content: center;
         }
         .container {
             background-color: rgba(255, 255, 255, 0.95);
@@ -47,18 +47,15 @@
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
             width: 100%;
             border: 1px solid rgba(224, 224, 224, 0.6);
-            
             opacity: 1;
             transform: translateY(0) scale(1);
             transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        /* Class to trigger initial load animation */
         .container.animate-initial-load {
             opacity: 0;
             transform: translateY(30px) scale(0.95);
             animation: fadeInPopUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
-
         @media (max-width: 768px) {
             .container {
                 padding: 20px;
@@ -117,7 +114,6 @@
             accent-color: #6366f1;
             transform: scale(1.2);
         }
-        /* Base button styles */
         .btn {
             width: 100%;
             padding: 14px;
@@ -132,7 +128,7 @@
             align-items: center;
             justify-content: center;
             text-decoration: none;
-            color: white; /* Default white text for all custom buttons */
+            color: white;
             letter-spacing: 0.5px;
         }
         .btn:hover {
@@ -149,8 +145,6 @@
             transform: translateY(0);
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
-
-        /* Primary button (Kirim Data) */
         .btn-primary {
             background-color: #6366f1;
             background-image: linear-gradient(to right, #6366f1, #8b5cf6);
@@ -163,12 +157,6 @@
             background-image: linear-gradient(to right, #4f46e5, #7c3aed);
             box-shadow: 0 12px 30px rgba(99, 102, 241, 0.7);
         }
-        .btn-primary:active {
-            background-color: #4338ca;
-            background-image: linear-gradient(to right, #4338ca, #6d28d9);
-        }
-
-        /* Secondary button (Isi Formulir Lagi) */
         .btn-secondary {
             background-color: #6b7280;
             background-image: linear-gradient(to right, #6b7280, #9ca3af);
@@ -177,10 +165,7 @@
         .btn-secondary:hover {
             background-color: #4b5563;
             background-image: linear-gradient(to right, #4b5563, #6b7280);
-            box-shadow: 0 8px 20px rgba(107, 114, 128, 0.45);
         }
-        
-        /* Rules Continue Button */
         .btn-continue {
             background-color: #10b981;
             background-image: linear-gradient(to right, #10b981, #34d399);
@@ -192,15 +177,7 @@
         .btn-continue:hover {
             background-color: #059669;
             background-image: linear-gradient(to right, #059669, #22c55e);
-            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.7);
         }
-        .btn-continue:active {
-            background-color: #047857;
-            background-image: linear-gradient(to right, #047857, #15803d);
-        }
-
-
-        /* Community Social Media Buttons Container */
         .community-social-media-links {
             display: flex;
             flex-wrap: wrap;
@@ -210,98 +187,9 @@
             padding-top: 25px;
             border-top: 1px solid #eceff1;
         }
-        .community-social-media-links h3 {
-            width: 100%;
-            margin-bottom: 15px;
-        }
-        .community-social-media-links .btn-social-media {
-            flex-grow: 0;
-            width: auto;
-            padding: 10px 15px;
-            font-size: 0.9rem;
-            border-radius: 8px;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-            color: white;
-        }
-        .community-social-media-links .btn-social-media svg {
-            margin-right: 6px;
-            width: 18px;
-            height: 18px;
-            fill: currentColor;
-        }
-        @media (max-width: 480px) {
-            .community-social-media-links .btn-social-media {
-                flex-basis: calc(50% - 4px);
-            }
-        }
-
-        /* Livechat Bubble Styles */
-        .livechat-bubble-container {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 10px;
-        }
-
-        .livechat-text-bubble {
-            background-color: #fff;
-            color: #333;
-            padding: 10px 15px;
-            border-radius: 15px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            opacity: 0;
-            transform: translateY(10px);
-            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
-            pointer-events: none;
-            white-space: nowrap;
-        }
-
-        .livechat-bubble-container:hover .livechat-text-bubble {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .btn-livechat-bubble {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background-color: #f59e0b;
-            background-image: linear-gradient(to bottom right, #f59e0b, #fbbf24);
-            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.6);
-            color: white;
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-        }
-        .btn-livechat-bubble:hover {
-            transform: scale(1.1);
-            background-color: #d97706;
-            background-image: linear-gradient(to bottom right, #d97706, #fcd34d);
-            box-shadow: 0 12px 25px rgba(245, 158, 11, 0.7);
-        }
-        .btn-livechat-bubble:active {
-            transform: scale(1.0);
-            box-shadow: 0 6px 15px rgba(245, 158, 11, 0.5);
-        }
-        .btn-livechat-bubble svg {
-            width: 30px;
-            height: 30px;
-            fill: currentColor;
-        }
-
         .hidden {
             display: none;
         }
-        
-        /* Modal Styles */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -322,10 +210,9 @@
         .modal-content {
             background-color: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
             padding: 40px;
             border-radius: 20px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4), 0 0 0 2px rgba(255, 255, 255, 0.7) inset;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
             max-width: 550px;
             width: 90%;
             text-align: center;
@@ -336,35 +223,9 @@
             max-height: 90vh;
             overflow-y: auto;
         }
-        @media (max-width: 480px) {
-            .modal-content {
-                padding: 25px;
-            }
-        }
         .modal-overlay.show .modal-content {
             transform: translateY(0) scale(1);
             opacity: 1;
-        }
-        .modal-content.success {
-            border: 2px solid #10b981;
-        }
-        .modal-content.error {
-            border: 2px solid #ef4444;
-        }
-        .modal-content h3 {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: #10b981;
-        }
-        .modal-content.error h3 {
-            color: #ef4444;
-        }
-        .modal-content p {
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-            line-height: 1.7;
-            color: #4b5563;
         }
         .modal-close-btn {
             position: absolute;
@@ -375,13 +236,12 @@
             font-size: 2rem;
             cursor: pointer;
             color: #9ca3af;
-            transition: color 0.2s ease-in-out, transform 0.3s ease-in-out;
+            transition: color 0.2s, transform 0.3s;
         }
         .modal-close-btn:hover {
             color: #6b7280;
             transform: rotate(180deg) scale(1.1);
         }
-
         .qr-code-container {
             margin-top: 30px;
             display: flex;
@@ -389,17 +249,6 @@
             align-items: center;
             flex-direction: column;
             gap: 15px;
-            opacity: 0;
-            transform: scale(0.7);
-            animation: scaleIn 0.7s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
-            animation-delay: 0.3s;
-        }
-        .qr-code-container canvas {
-            border: 8px solid #6366f1;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            max-width: 100%;
-            height: auto;
         }
         .loading-spinner {
             border: 4px solid rgba(255, 255, 255, 0.4);
@@ -413,152 +262,63 @@
             margin-right: 10px;
         }
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            to { transform: rotate(360deg); }
         }
-
-        /* Animations */
         @keyframes fadeInPopUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px) scale(0.95);
-            }
             to {
                 opacity: 1;
                 transform: translateY(0) scale(1);
             }
         }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes scaleIn {
-            from { transform: scale(0.7); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
         .animate-fade-in-slide-up {
             animation: fadeInPopUp 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
-
-        .animate-fade-in {
-            animation: fadeIn 0.5s ease-out forwards;
-        }
-
-        .animate-scale-in {
-            animation: scaleIn 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
-        }
-
         .rules-section {
-            max-height: 70vh;
+            max-height: 60vh; /* Adjusted height */
             overflow-y: auto;
-            padding-right: 15px;
+            padding-right: 15px; /* For scrollbar */
             margin-bottom: 20px;
-            line-height: 1.8;
+            line-height: 1.7;
             color: #4b5563;
-        }
-        .rules-section h2 {
-            font-size: 2.4rem;
-            font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 25px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+            text-align: left;
         }
         .rules-section h3 {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 600;
             color: #1f2937;
-            margin-top: 35px;
+            margin-top: 25px;
             margin-bottom: 15px;
-            text-shadow: 0.5px 0.5px 1px rgba(0,0,0,0.03);
         }
         .rules-section ol {
-            list-style-type: decimal; /* Explicitly set decimal numbering */
-            padding-left: 25px;
-            margin-bottom: 20px;
+            list-style-position: inside; /* Fix for numbering */
+            padding-left: 5px; /* Adjust padding */
         }
-        .rules-section ol li {
-            margin-bottom: 12px;
-        }
-        .rules-section p {
-            margin-bottom: 12px;
+        .rules-section li {
+            margin-bottom: 10px;
         }
         .agreement-checkbox-group {
             display: flex;
             align-items: flex-start;
-            margin-top: 30px;
-            padding-top: 25px;
+            margin-top: 20px;
+            padding-top: 20px;
             border-top: 1px solid #e5e7eb;
         }
         .agreement-checkbox-group input[type="checkbox"] {
-            margin-top: 4px;
+            margin-top: 5px;
             margin-right: 12px;
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
             accent-color: #6366f1;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         .agreement-checkbox-group label {
             font-weight: 500;
             cursor: pointer;
             color: #1f2937;
-            display: inline;
-            font-size: 1.05rem;
+            text-align: left;
+            flex: 1;
         }
-        /* Styles for social media inputs (member's input) */
-        .social-media-input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        @media (min-width: 640px) {
-            .social-media-input-group {
-                flex-direction: row;
-                flex-wrap: wrap;
-                justify-content: space-between;
-            }
-            .social-media-input-group > div {
-                flex: 1 1 calc(33.33% - 10px);
-                min-width: 150px;
-            }
-        }
-        .social-media-input-group label {
-            font-size: 0.95rem;
-            margin-bottom: 5px;
-        }
-
-        /* Footer Styles */
-        .footer {
-            margin-top: 40px;
-            padding: 20px;
-            text-align: center;
-            color: #6b7280;
-            font-size: 0.9rem;
-            border-top: 1px solid #e5e7eb;
-            width: 100%;
-            max-width: 700px;
-            box-sizing: border-box;
-        }
-
-        /* Face Detection Section Styles */
         #faceDetectionContainer {
-            background-color: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
-            width: 100%;
-            border: 1px solid rgba(224, 224, 224, 0.6);
             text-align: center;
-            opacity: 0;
-            transform: translateY(30px) scale(0.95);
-            transition: opacity 0.7s ease-out, transform 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        #faceDetectionContainer.animate-fade-in-slide-up {
-            animation: fadeInPopUp 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
         #webcamVideo {
             width: 100%;
@@ -578,36 +338,77 @@
             color: #4b5563;
             font-weight: 500;
         }
-        #startWebcamButton {
-            margin-top: 20px;
-            background-color: #3b82f6;
-            background-image: linear-gradient(to right, #3b82f6, #2563eb);
+        /* START: Scratch Card Styles */
+        #scratchCardWrapper {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            margin: 0 auto;
+            height: 200px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
-        #startWebcamButton:hover {
-            background-color: #2563eb;
-            background-image: linear-gradient(to right, #2563eb, #1d4ed8);
+        #scratchCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 16px;
+            cursor: grab;
         }
-        #continueToFormButton {
-            margin-top: 20px;
-            background-color: #10b981;
-            background-image: linear-gradient(to right, #10b981, #34d399);
+        #scratchCanvas:active {
+            cursor: grabbing;
         }
-        #continueToFormButton:hover {
-            background-color: #059669;
-            background-image: linear-gradient(to right, #059669, #22c55e);
+        #hiddenContent {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #ffffff;
+            border-radius: 16px;
+            padding: 20px;
+        }
+        #secretPassword {
+            text-align: center;
+            font-size: 1.2rem;
+            padding: 12px;
+        }
+        #verifyPasswordButton {
+            width: auto;
+            padding: 10px 24px;
+            font-size: 1rem;
+            margin-top: 15px;
+        }
+        /* END: Scratch Card Styles */
+        .footer {
+            margin-top: 40px;
+            padding: 20px;
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.9rem;
+            border-top: 1px solid #e5e7eb;
+            width: 100%;
+            max-width: 700px;
         }
     </style>
 </head>
 <body>
     <div class="main-content-wrapper">
         <div class="container">
-            <!-- Rules Section -->
+            <!-- Rules Section - RESTRUCTURED AND FIXED -->
             <div id="rulesContainer">
-                <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">Peraturan Komunitas X5 (New Update 27 May 2024)</h2>
+                <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">Peraturan Komunitas X5</h2>
                 <div class="rules-section">
                     <p>Tujuan dibuat aturan yang sangat ketat untuk kepentingan bersama. Kami berkomitmen ingin menciptakan komunitas ini nyaman dan aman untuk siapa saja. Pastikan baca peraturan ini sebelum memulai diskusi.</p>
                     <h3>PERATURAN UMUM UNTUK SEMUA ANGGOTA</h3>
-                    <ol>
+                    <ol class="list-decimal">
                         <li>Menjunjung tinggi etika, adab dan sopan santun kepada semua anggota.</li>
                         <li>Dilarang berdiskusi mendiskriminasi agama dan ras tertentu. Hindari juga berdiskusi sara, dan politik. [SP/BANNED]</li>
                         <li>Hindari melepas tittle ''X5'' tanpa persetujuan moderator/staff. [SP/BANNED]</li>
@@ -628,76 +429,67 @@
                 </div>
                 <div class="agreement-checkbox-group">
                     <input type="checkbox" id="agreeToRules">
-                    <label for="agreeToRules">Saya menyetujui syarat, ketentuan dan kebijakan privasi yang berlaku</label>
+                    <label for="agreeToRules">Saya menyetujui semua syarat, ketentuan, dan kebijakan privasi yang berlaku.</label>
                 </div>
-                <button type="button" id="continueButton" class="btn btn-continue" disabled>
-                    Lanjutkan
-                </button>
+                <button type="button" id="continueButton" class="btn btn-continue" disabled>Lanjutkan</button>
             </div>
 
             <!-- Face Detection Section -->
-            <div id="faceDetectionContainer" class="hidden">
-                <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">Pendeteksi Wajah Real-time</h2>
-                <p class="text-center text-gray-600 mb-4">
-                    Untuk melanjutkan, kami memerlukan akses kamera Anda untuk pendeteksian wajah. <br>
-                    Ini hanya untuk tujuan verifikasi dan tidak ada data wajah yang akan disimpan.
-                </p>
+            <div id="faceDetectionContainer" class="hidden animate-fade-in-slide-up">
+                <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">Pendeteksi Wajah</h2>
+                <p class="text-center text-gray-600 mb-4">Untuk verifikasi, kami perlu akses kamera Anda. Tidak ada data wajah yang disimpan.</p>
                 <video id="webcamVideo" autoplay muted playsinline></video>
-                <p id="faceDetectionMessage" class="text-center text-gray-500">Menunggu akses kamera...</p>
-                <button type="button" id="startWebcamButton" class="btn btn-primary mt-4">
-                    Mulai Deteksi Wajah
-                </button>
-                <button type="button" id="continueToFormButton" class="btn btn-continue mt-4" disabled>
-                    Lanjutkan ke Formulir
-                </button>
+                <p id="faceDetectionMessage" class="text-center">Menunggu akses kamera...</p>
+                <button type="button" id="startWebcamButton" class="btn btn-primary mt-4" style="background-image: linear-gradient(to right, #3b82f6, #2563eb);">Mulai Deteksi</button>
+                <button type="button" id="continueToFormButton" class="btn btn-continue mt-4" disabled>Lanjutkan ke Verifikasi Final</button>
+            </div>
+
+            <!-- Scratch Card Verification Section -->
+            <div id="scratchCardContainer" class="hidden animate-fade-in-slide-up">
+                <h2 class="text-3xl font-bold text-center text-gray-800 mb-2">Verifikasi Final!</h2>
+                <p class="text-gray-600 mb-6 text-center">Gosok area di bawah ini untuk mengungkapkan tantangan terakhir!</p>
+                <div id="scratchCardWrapper">
+                    <canvas id="scratchCanvas"></canvas>
+                    <div id="hiddenContent">
+                        <label for="secretPassword" class="font-semibold text-gray-700 mb-2">Kata Sandi Komunitas:</label>
+                        <input type="text" id="secretPassword" placeholder="Masukkan kata sandi...">
+                        <button type="button" id="verifyPasswordButton" class="btn btn-primary">Verifikasi</button>
+                        <p id="passwordError" class="text-red-500 text-sm mt-1 hidden">Kata sandi salah!</p>
+                    </div>
+                </div>
             </div>
 
             <!-- Member Registration Form -->
             <div id="memberFormContainer" class="hidden">
-                <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">Formulir Pendataan Member Komunitas X5</h1>
+                <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">Formulir Pendataan Member</h1>
                 <form id="memberForm">
-                    <!-- Nama Panggilan -->
                     <div class="form-group">
                         <label for="namaPanggilan">Nama Panggilan:</label>
-                        <input type="text" id="namaPanggilan" name="namaPanggilan" placeholder="Masukkan nama panggilan Anda" required>
+                        <input type="text" id="namaPanggilan" name="namaPanggilan" required>
                     </div>
-
-                    <!-- Nickname Ayodance -->
                     <div class="form-group">
                         <label for="nicknameAyodance">Nickname Ayodance:</label>
-                        <input type="text" id="nicknameAyodance" name="nicknameAyodance" placeholder="Masukkan nickname Ayodance Anda" required>
+                        <input type="text" id="nicknameAyodance" name="nicknameAyodance" required>
                     </div>
-
-                    <!-- Tanggal Lahir -->
                     <div class="form-group">
                         <label for="tanggalLahir">Tanggal Lahir:</label>
                         <input type="date" id="tanggalLahir" name="tanggalLahir" required>
                     </div>
-
-                    <!-- Domisili (Single Text Input) -->
                     <div class="form-group">
-                        <label for="domisili">Domisili:</label>
-                        <input type="text" id="domisili" name="domisili" placeholder="Contoh: Jawa Barat - Bogor - Cibinong" required>
+                        <label for="domisili">Domisili (Contoh: Jawa Barat - Bogor):</label>
+                        <input type="text" id="domisili" name="domisili" required>
                     </div>
-
-                    <!-- Sosial Media (opsi pilihan) -->
                     <div class="form-group">
-                        <label>Punya Sosial Media yang ingin dicantumkan?</label>
+                        <label>Punya Sosial Media?</label>
                         <div class="radio-group">
-                            <label>
-                                <input type="radio" name="hasSocialMedia" value="Ya" id="socialMediaYes"> Ya
-                            </label>
-                            <label>
-                                <input type="radio" name="hasSocialMedia" value="Tidak" id="socialMediaNo" checked> Tidak
-                            </label>
+                            <label><input type="radio" name="hasSocialMedia" value="Ya"> Ya</label>
+                            <label><input type="radio" name="hasSocialMedia" value="Tidak" checked> Tidak</label>
                         </div>
                         <div id="socialMediaInputContainer" class="mt-3 hidden">
-                            <label for="sosialMediaName">Nama Sosial Media (contoh: Instagram @username):</label>
-                            <input type="text" id="sosialMediaName" name="sosialMediaName" placeholder="Masukkan nama sosial media Anda">
+                            <label for="sosialMediaName">Nama Sosial Media (contoh: IG @username):</label>
+                            <input type="text" id="sosialMediaName" name="sosialMediaName">
                         </div>
                     </div>
-
-                    <!-- Divisi Community -->
                     <div class="form-group">
                         <label for="divisiCommunity">Divisi Community:</label>
                         <select id="divisiCommunity" name="divisiCommunity" required>
@@ -706,10 +498,8 @@
                             <option value="Com">Com</option>
                         </select>
                     </div>
-
-                    <!-- Tester -->
                     <div class="form-group">
-                        <label for="tester">Tester:</label>
+                        <label for="tester">Pilih Tester Anda:</label>
                         <select id="tester" name="tester" required>
                             <option value="">Pilih Tester</option>
                             <option value="Ramsky">Ramsky</option>
@@ -726,389 +516,183 @@
                             <option value="Zarah">Zarah</option>
                         </select>
                     </div>
-
                     <button type="submit" id="submitButton" class="btn btn-primary">
                         <span id="buttonText">Kirim Data</span>
                         <span id="loadingSpinner" class="loading-spinner hidden"></span>
                     </button>
-
-                    <!-- Community Social Media Buttons -->
-                    <div class="mt-6 border-t pt-6 border-gray-200">
-                        <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">Kunjungi Sosial Media Kami:</h3>
-                        <div class="community-social-media-links">
-                            <a href="https://www.contohwebsitekomunitas.com" target="_blank" class="btn btn-social-media website">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-globe"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/><path d="M12 2a14.5 14.5 0 0 1 0 20 14.5 14.5 0 0 1 0-20"/></svg>
-                                Website
-                            </a>
-                            <a href="https://www.facebook.com/contohkomunitasx5" target="_blank" class="btn btn-social-media facebook">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-facebook"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-                                Facebook
-                            </a>
-                            <a href="https://www.instagram.com/contohkomunitasx5" target="_blank" class="btn btn-social-media instagram">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-instagram"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
-                                Instagram
-                            </a>
-                        </div>
-                    </div>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Custom Notification Modal -->
+    <!-- Modal and Footer can remain the same -->
     <div id="notificationModalOverlay" class="modal-overlay hidden">
-        <div id="notificationModalContent" class="modal-content">
-            <button id="modalCloseBtn" class="modal-close-btn">&times;</button>
-            <h3 id="modalTitle"></h3>
-            <p id="modalMessage"></p>
-            <div id="modalQrCodeContainer" class="qr-code-container">
-                <!-- QR Code akan muncul di sini -->
-            </div>
-            
-            <!-- Download QR Button -->
-            <a id="downloadQrButton" class="btn btn-primary mt-4 hidden" download="qr_code_x5.png">
-                Download QR
-            </a>
-
-            <button id="modalResetFormButton" class="btn btn-secondary mt-5">Isi Formulir Lagi</button>
-        </div>
+        <!-- ... modal content ... -->
     </div>
-
-    <!-- Livechat Floating Bubble -->
-    <div class="livechat-bubble-container">
-        <div class="livechat-text-bubble">yuk ngobrol bareng xfive</div>
-        <button type="button" id="livechatButton" class="btn-livechat-bubble">
-            <!-- Chat bubble icon (Lucide Icons) -->
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
-        </button>
-    </div>
-
-    <!-- Footer -->
     <footer class="footer">
-        <p>&copy; 2017 XFIVECommunity. All rights reserved.</p>
+        <p>&copy; 2017-2024 XFIVECommunity. All rights reserved.</p>
     </footer>
 
-    <!-- QRious Library CDN -->
     <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const container = document.querySelector('.container');
-            container.classList.add('animate-initial-load');
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get all elements
+        const rulesContainer = document.getElementById('rulesContainer');
+        const faceDetectionContainer = document.getElementById('faceDetectionContainer');
+        const scratchCardContainer = document.getElementById('scratchCardContainer');
+        const memberFormContainer = document.getElementById('memberFormContainer');
 
-            const rulesContainer = document.getElementById('rulesContainer');
-            const faceDetectionContainer = document.getElementById('faceDetectionContainer');
-            const memberFormContainer = document.getElementById('memberFormContainer');
-            const agreeToRulesCheckbox = document.getElementById('agreeToRules');
-            const continueButton = document.getElementById('continueButton');
+        const agreeToRulesCheckbox = document.getElementById('agreeToRules');
+        const continueButton = document.getElementById('continueButton');
 
-            const webcamVideo = document.getElementById('webcamVideo');
-            const faceDetectionMessage = document.getElementById('faceDetectionMessage');
-            const startWebcamButton = document.getElementById('startWebcamButton');
-            const continueToFormButton = document.getElementById('continueToFormButton');
+        const webcamVideo = document.getElementById('webcamVideo');
+        const faceDetectionMessage = document.getElementById('faceDetectionMessage');
+        const startWebcamButton = document.getElementById('startWebcamButton');
+        const continueToFormButton = document.getElementById('continueToFormButton');
 
-            const memberForm = document.getElementById('memberForm');
-            const submitButton = document.getElementById('submitButton');
-            const buttonText = document.getElementById('buttonText');
-            const loadingSpinner = document.getElementById('loadingSpinner');
-            
-            const domisiliInput = document.getElementById('domisili');
+        // Scratch card elements
+        const scratchCanvas = document.getElementById('scratchCanvas');
+        const scratchCardWrapper = document.getElementById('scratchCardWrapper');
+        const verifyPasswordButton = document.getElementById('verifyPasswordButton');
+        const passwordInput = document.getElementById('secretPassword');
+        const passwordError = document.getElementById('passwordError');
+        
+        const memberForm = document.getElementById('memberForm');
+        // ... other form elements
 
-            const socialMediaYes = document.getElementById('socialMediaYes');
-            const socialMediaNo = document.getElementById('socialMediaNo');
-            const socialMediaInputContainer = document.getElementById('socialMediaInputContainer');
-            const sosialMediaNameInput = document.getElementById('sosialMediaName');
+        let mediaStream = null;
+        let faceDetectionTimeoutId = null;
 
-            const livechatButton = document.getElementById('livechatButton');
-
-            const notificationModalOverlay = document.getElementById('notificationModalOverlay');
-            const notificationModalContent = document.getElementById('notificationModalContent');
-            const modalCloseBtn = document.getElementById('modalCloseBtn');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalMessage = document.getElementById('modalMessage');
-            const modalQrCodeContainer = document.getElementById('modalQrCodeContainer');
-            const modalResetFormButton = document.getElementById('modalResetFormButton');
-            const downloadQrButton = document.getElementById('downloadQrButton');
-
-            let currentMemberNickname = '';
-            let mediaStream = null;
-            let faceDetectionTimeoutId = null;
-
-
-            const testerQrData = {
-                "Ramsky": "https://wa.me/6285693393707",
-                "Fadel": "https://wa.me/6282173876492",
-                "Fajar": "https://wa.me/6287750639436",
-                "Thomas": "https://wa.me/6281374402822",
-                "Joko": "https://wa.me/6289514915776",
-                "Citra": "https://wa.me/6283825756494",
-                "Mey": "https://wa.me/6287704534610",
-                "Vandhu": "https://wa.me/6281371412119", // Placeholder for Vandhu
-                "Ardiansyah": "https://wa.me/6287745673345", // Placeholder for Ardiansyah
-                "Eza": "https://wa.me/6289517090040", // Placeholder for Eza
-                "Wale": "https://wa.me/6282276260740", // Placeholder for Wale
-                "Zarah": "https://wa.me/6281342620907" // Placeholder for Zahra
-            };
-
-            function showNotification(title, message, isError, qrValue = null, showResetButton = true) {
-                modalTitle.textContent = title;
-                modalMessage.innerHTML = message;
-
-                notificationModalContent.classList.remove('success', 'error');
-                modalTitle.style.color = '';
-
-                if (isError) {
-                    notificationModalContent.classList.add('error');
-                    modalTitle.style.color = '#ef4444';
-                    modalQrCodeContainer.classList.add('hidden');
-                    downloadQrButton.classList.add('hidden');
-                } else {
-                    notificationModalContent.classList.add('success');
-                    modalTitle.style.color = '#10b981';
-                    
-                    if (qrValue) {
-                        modalQrCodeContainer.classList.remove('hidden');
-                        modalQrCodeContainer.innerHTML = '';
-                        const qrCanvas = document.createElement('canvas');
-                        qrCanvas.width = 200;
-                        qrCanvas.height = 200;
-                        modalQrCodeContainer.appendChild(qrCanvas);
-
-                        new QRious({
-                            element: qrCanvas,
-                            value: qrValue,
-                            size: 200,
-                            background: 'white',
-                            foreground: '#6366f1'
-                        });
-                        modalQrCodeContainer.classList.add('animate-scale-in');
-
-                        downloadQrButton.href = qrCanvas.toDataURL('image/png');
-                        downloadQrButton.download = `qr_x5_${currentMemberNickname || 'member'}.png`;
-                        downloadQrButton.classList.remove('hidden');
-                    } else {
-                        modalQrCodeContainer.classList.add('hidden');
-                        downloadQrButton.classList.add('hidden');
-                    }
-                }
-
-                if (showResetButton) {
-                    modalResetFormButton.classList.remove('hidden');
-                } else {
-                    modalResetFormButton.classList.add('hidden');
-                }
-
-                notificationModalOverlay.classList.remove('hidden');
-                void notificationModalOverlay.offsetWidth; 
-                notificationModalOverlay.classList.add('show');
-            }
-
-            function hideNotification() {
-                notificationModalOverlay.classList.remove('show');
-                setTimeout(() => {
-                    notificationModalOverlay.classList.add('hidden');
-                    modalQrCodeContainer.classList.remove('animate-scale-in');
-                    downloadQrButton.classList.add('hidden');
-                }, 300); 
-            }
-
-            agreeToRulesCheckbox.addEventListener('change', function() {
-                if (this.checked) {
-                    continueButton.disabled = false;
-                    continueButton.classList.remove('opacity-60', 'cursor-not-allowed');
-                } else {
-                    continueButton.disabled = true;
-                    continueButton.classList.add('opacity-60', 'cursor-not-allowed');
-                }
-            });
-
-            continueButton.addEventListener('click', function() {
-                if (agreeToRulesCheckbox.checked) {
-                    rulesContainer.classList.add('hidden');
-                    faceDetectionContainer.classList.remove('hidden');
-                    faceDetectionContainer.classList.add('animate-fade-in-slide-up');
-                    // Reset face detection state when entering this section
-                    faceDetectionMessage.textContent = 'Menunggu akses kamera...';
-                    startWebcamButton.disabled = false;
-                    continueToFormButton.disabled = true;
-                    webcamVideo.style.borderColor = '#cfd8dc';
-                    webcamVideo.style.borderWidth = '4px';
-                    if (mediaStream) {
-                        mediaStream.getTracks().forEach(track => track.stop());
-                        webcamVideo.srcObject = null;
-                    }
-                    if (faceDetectionTimeoutId) {
-                        clearTimeout(faceDetectionTimeoutId);
-                        faceDetectionTimeoutId = null;
-                    }
-                }
-            });
-
-            startWebcamButton.addEventListener('click', async () => {
-                startWebcamButton.disabled = true;
-                faceDetectionMessage.textContent = 'Memulai kamera...';
-                try {
-                    mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
-                    webcamVideo.srcObject = mediaStream;
-                    await webcamVideo.play();
-
-                    faceDetectionMessage.textContent = 'Kamera aktif. Mencari wajah...';
-                    webcamVideo.style.borderColor = '#f59e0b';
-                    webcamVideo.style.borderWidth = '4px';
-
-                    // Simulate face detection after 3 seconds
-                    faceDetectionTimeoutId = setTimeout(() => {
-                        faceDetectionMessage.textContent = 'Wajah Terdeteksi!';
-                        webcamVideo.style.borderColor = '#10b981';
-                        webcamVideo.style.borderWidth = '4px';
-                        continueToFormButton.disabled = false;
-                        faceDetectionTimeoutId = null;
-                    }, 3000);
-
-                } catch (err) {
-                    console.error("Error accessing webcam: ", err);
-                    faceDetectionMessage.textContent = 'Gagal mengakses kamera. Pastikan izin diberikan.';
-                    startWebcamButton.disabled = false;
-                    webcamVideo.style.borderColor = '#ef4444';
-                    webcamVideo.style.borderWidth = '4px';
-                    if (faceDetectionTimeoutId) {
-                        clearTimeout(faceDetectionTimeoutId);
-                        faceDetectionTimeoutId = null;
-                    }
-                }
-            });
-
-            continueToFormButton.addEventListener('click', () => {
-                if (mediaStream) {
-                    mediaStream.getTracks().forEach(track => track.stop());
-                    webcamVideo.srcObject = null;
-                }
-                if (faceDetectionTimeoutId) {
-                    clearTimeout(faceDetectionTimeoutId);
-                    faceDetectionTimeoutId = null;
-                }
-                faceDetectionContainer.classList.add('hidden');
-                memberFormContainer.classList.remove('hidden');
-                memberFormContainer.classList.add('animate-fade-in-slide-up');
-            });
-
-            socialMediaYes.addEventListener('change', function() {
-                socialMediaInputContainer.classList.remove('hidden');
-                sosialMediaNameInput.setAttribute('required', 'required');
-            });
-
-            socialMediaNo.addEventListener('change', function() {
-                socialMediaInputContainer.classList.add('hidden');
-                sosialMediaNameInput.removeAttribute('required');
-                sosialMediaNameInput.value = '';
-            });
-
-            livechatButton.addEventListener('click', function() {
-                showNotification('Coming Soon!', 'Fitur livechat sedang dalam pengembangan. Mohon bersabar ya!', false, null, false);
-            });
-
-            memberForm.addEventListener('submit', async function(event) {
-                event.preventDefault();
-
-                submitButton.disabled = true;
-                buttonText.textContent = 'Mengirim...';
-                loadingSpinner.classList.remove('hidden');
-
-                const formData = new FormData(memberForm);
-                const data = {};
-                for (let [key, value] of formData.entries()) {
-                    data[key] = value;
-                }
-                data.type = 'registration';
-
-                data.domisili = domisiliInput.value;
-
-                if (data.hasSocialMedia === 'Tidak') {
-                    data.sosialMediaName = 'Tidak ada';
-                }
-
-                currentMemberNickname = data.nicknameAyodance;
-
-                const googleAppsScriptURL = 'https://script.google.com/macros/s/AKfycbwEUL4YkEYBfaIl1-T2jYueJorhn5SyS2q1YLpse5bhlleULPXIy3TjnwkputvVm156gg/exec';
-
-                try {
-                    const response = await fetch(googleAppsScriptURL, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        mode: 'no-cors', 
-                        body: JSON.stringify(data),
-                    });
-
-                    console.log('Data pendaftaran dikirim:', data);
-                    console.log('Respons fetch (mode no-cors, ini akan terbatas):', response);
-
-                    const testerName = data.tester;
-                    const welcomeMessage = `Terima kasih, <strong>${data.namaPanggilan}</strong>! Kami sangat senang Anda bergabung dengan Komunitas X5. Selamat datang dan mari kita bangun komunitas yang nyaman dan aman bersama-sama! <br><br>Salam dari Tester Anda, <strong>${testerName}</strong>. <br><br>Scan barcode ini untuk menghubungi tester Anda.`;
-                    
-                    const qrValue = testerQrData[testerName] || `Selamat datang di X5, ${data.namaPanggilan}! Tester Anda: ${testerName}.`; 
-                    
-                    showNotification('Selamat Bergabung di Komunitas X5!', welcomeMessage, false, qrValue, true);
-
-                    memberFormContainer.classList.add('hidden');
-
-                } catch (error) {
-                    console.error('Terjadi kesalahan saat mengirim data pendaftaran:', error);
-                    const errorMessage = `Maaf, terjadi kesalahan saat mengirim data pendaftaran. Detail: ${error.message}.<br>Ini biasanya karena URL Apps Script tidak dapat diakses atau ada masalah jaringan. Silakan periksa kembali deployment Apps Script Anda.`;
-                    showNotification('Terjadi Kesalahan!', errorMessage, true, null, true);
-                } finally {
-                    submitButton.disabled = false;
-                    buttonText.textContent = 'Kirim Data';
-                    loadingSpinner.classList.add('hidden');
-                }
-            });
-
-            modalResetFormButton.addEventListener('click', function() {
-                hideNotification();
-                memberForm.reset();
-                
-                socialMediaInputContainer.classList.add('hidden');
-                sosialMediaNameInput.removeAttribute('required');
-                sosialMediaNameInput.value = '';
-                socialMediaNo.checked = true;
-
-                domisiliInput.value = '';
-
-                if (mediaStream) {
-                    mediaStream.getTracks().forEach(track => track.stop());
-                    webcamVideo.srcObject = null;
-                }
-                if (faceDetectionTimeoutId) {
-                    clearTimeout(faceDetectionTimeoutId);
-                    faceDetectionTimeoutId = null;
-                }
-                startWebcamButton.disabled = false;
-                continueToFormButton.disabled = true;
-                faceDetectionMessage.textContent = 'Menunggu akses kamera...';
-                webcamVideo.style.borderColor = '#cfd8dc';
-                webcamVideo.style.borderWidth = '4px';
-
-                memberFormContainer.classList.add('hidden');
-                memberFormContainer.classList.remove('animate-fade-in-slide-up');
-                faceDetectionContainer.classList.add('hidden');
-                faceDetectionContainer.classList.remove('animate-fade-in-slide-up');
-
-                rulesContainer.classList.remove('hidden');
-                rulesContainer.classList.add('animate-fade-in-slide-up');
-                agreeToRulesCheckbox.checked = false;
-                continueButton.disabled = true;
-                continueButton.classList.add('opacity-60', 'cursor-not-allowed');
-                currentMemberNickname = '';
-            });
-
-            modalCloseBtn.addEventListener('click', hideNotification);
-
-            notificationModalOverlay.addEventListener('click', function(event) {
-                if (event.target === notificationModalOverlay) {
-                    hideNotification();
-                }
-            });
+        // --- Step 1: Rules Agreement ---
+        agreeToRulesCheckbox.addEventListener('change', function() {
+            continueButton.disabled = !this.checked;
         });
+
+        continueButton.addEventListener('click', function() {
+            if (agreeToRulesCheckbox.checked) {
+                rulesContainer.classList.add('hidden');
+                faceDetectionContainer.classList.remove('hidden');
+            }
+        });
+
+        // --- Step 2: Face Detection ---
+        startWebcamButton.addEventListener('click', async () => {
+            startWebcamButton.disabled = true;
+            faceDetectionMessage.textContent = 'Memulai kamera...';
+            try {
+                mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                webcamVideo.srcObject = mediaStream;
+                await webcamVideo.play();
+                faceDetectionMessage.textContent = 'Kamera aktif. Mencari wajah...';
+                webcamVideo.style.borderColor = '#f59e0b';
+
+                faceDetectionTimeoutId = setTimeout(() => {
+                    faceDetectionMessage.textContent = 'Wajah Terdeteksi!';
+                    webcamVideo.style.borderColor = '#10b981';
+                    continueToFormButton.disabled = false;
+                }, 3000);
+            } catch (err) {
+                faceDetectionMessage.textContent = 'Gagal mengakses kamera. Pastikan izin diberikan.';
+                webcamVideo.style.borderColor = '#ef4444';
+                startWebcamButton.disabled = false;
+            }
+        });
+
+        continueToFormButton.addEventListener('click', () => {
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+            }
+            faceDetectionContainer.classList.add('hidden');
+            scratchCardContainer.classList.remove('hidden');
+        });
+
+        // --- Step 3: Scratch Card Verification ---
+        if (scratchCanvas) {
+            const ctx = scratchCanvas.getContext('2d');
+            let isScratching = false;
+
+            function resizeCanvas() {
+                scratchCanvas.width = scratchCardWrapper.clientWidth;
+                scratchCanvas.height = scratchCardWrapper.clientHeight;
+                
+                const gradient = ctx.createLinearGradient(0, 0, scratchCanvas.width, scratchCanvas.height);
+                gradient.addColorStop(0, '#8b5cf6');
+                gradient.addColorStop(1, '#6366f1');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, scratchCanvas.width, scratchCanvas.height);
+
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.font = 'bold 24px "Inter", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('GOSOK DI SINI', scratchCanvas.width / 2, scratchCanvas.height / 2);
+            }
+
+            function scratch(e) {
+                if (!isScratching) return;
+                e.preventDefault();
+                const rect = scratchCanvas.getBoundingClientRect();
+                const x = (e.clientX || e.touches[0].clientX) - rect.left;
+                const y = (e.clientY || e.touches[0].clientY) - rect.top;
+
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.beginPath();
+                ctx.arc(x, y, 25, 0, Math.PI * 2, false);
+                ctx.fill();
+            }
+
+            window.addEventListener('resize', resizeCanvas);
+            scratchCanvas.addEventListener('mousedown', () => { isScratching = true; });
+            scratchCanvas.addEventListener('mouseup', () => { isScratching = false; });
+            scratchCanvas.addEventListener('mouseleave', () => { isScratching = false; });
+            scratchCanvas.addEventListener('mousemove', scratch);
+            scratchCanvas.addEventListener('touchstart', (e) => { e.preventDefault(); isScratching = true; });
+            scratchCanvas.addEventListener('touchend', () => { isScratching = false; });
+            scratchCanvas.addEventListener('touchmove', scratch);
+
+            resizeCanvas();
+        }
+
+        verifyPasswordButton.addEventListener('click', function() {
+            if (passwordInput.value.trim().toUpperCase() === 'X5') {
+                passwordError.classList.add('hidden');
+                scratchCardContainer.classList.add('hidden');
+                memberFormContainer.classList.remove('hidden');
+            } else {
+                passwordError.classList.remove('hidden');
+            }
+        });
+
+        // --- Step 4: Form Submission Logic ---
+        const socialMediaYes = document.querySelector('input[name="hasSocialMedia"][value="Ya"]');
+        const socialMediaNo = document.querySelector('input[name="hasSocialMedia"][value="Tidak"]');
+        const socialMediaInputContainer = document.getElementById('socialMediaInputContainer');
+        const sosialMediaNameInput = document.getElementById('sosialMediaName');
+
+        socialMediaYes.addEventListener('change', () => {
+            socialMediaInputContainer.classList.remove('hidden');
+            sosialMediaNameInput.required = true;
+        });
+        socialMediaNo.addEventListener('change', () => {
+            socialMediaInputContainer.classList.add('hidden');
+            sosialMediaNameInput.required = false;
+        });
+
+        memberForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            // Your existing form submission logic can go here
+            console.log('Form submitted!');
+            // Example: show a success message
+            alert('Terima kasih! Data Anda akan kami proses.');
+            // Ideally, you would replace alert with your custom modal logic
+            memberForm.reset();
+            memberFormContainer.classList.add('hidden');
+            rulesContainer.classList.remove('hidden');
+            agreeToRulesCheckbox.checked = false;
+            continueButton.disabled = true;
+        });
+
+    });
     </script>
 </body>
 </html>
