@@ -240,7 +240,15 @@
         .radio-group{display:flex;flex-wrap:wrap;gap:20px;margin-top:5px}
         .radio-group label{display:flex;align-items:center;font-weight:400;cursor:pointer; color:#e0e0e0;} /* Light label color */
         .radio-group input[type=radio]{width:auto;margin-right:8px;accent-color:#00FFFF;transform:scale(1.2)} /* Neon accent color */
-        .rules-section{max-height:60vh;overflow-y:auto;padding-right:15px;margin-bottom:20px;line-height:1.7;color:#e0e0e0;text-align:left} /* Light text color */
+        .rules-section{
+            max-height:60vh;
+            overflow-y:auto; /* Added scrollbar for rules section */
+            padding-right:15px;
+            margin-bottom:20px;
+            line-height:1.7;
+            color:#e0e0e0;
+            text-align:left
+        }
         .rules-section h3{font-size:1.5rem;font-weight:600;color:#00FFFF;margin-top:25px;margin-bottom:15px} /* Neon heading */
         .rules-section ol{list-style-position:inside;padding-left:5px}
         .rules-section li{margin-bottom:10px}
@@ -508,6 +516,8 @@
             const socialMediaNo = document.querySelector('input[name="hasSocialMedia"][value="Tidak"]');
             const socialMediaInputContainer = document.getElementById('socialMediaInputContainer');
             const testerSelect = document.getElementById('tester');
+            const divisiCommunitySelect = document.getElementById('divisiCommunity'); // Select for Divisi
+
             
             // Modal elements for form
             const notificationModal = {
@@ -526,6 +536,33 @@
                 option.textContent = name;
                 testerSelect.appendChild(option);
             });
+
+            // Set option colors for testerSelect and divisiCommunitySelect
+            function setSelectOptionColors(selectElement) {
+                if (selectElement) {
+                    // Set default color for the select element itself when no option is selected
+                    selectElement.style.color = 'white';
+                    selectElement.style.backgroundColor = '#1a1a1a'; // Dark background
+
+                    // Apply styles to options when the dropdown is open
+                    selectElement.addEventListener('focus', () => {
+                        Array.from(selectElement.options).forEach(option => {
+                            option.style.color = 'white';
+                            option.style.backgroundColor = '#1a1a1a';
+                        });
+                    });
+                     // Revert to default when focus is lost
+                    selectElement.addEventListener('blur', () => {
+                        Array.from(selectElement.options).forEach(option => {
+                            option.style.color = 'white';
+                            option.style.backgroundColor = '#1a1a1a';
+                        });
+                    });
+                }
+            }
+            setSelectOptionColors(testerSelect);
+            setSelectOptionColors(divisiCommunitySelect);
+
 
             // --- Event Listeners for Form Steps ---
             backToMenuBtn.addEventListener('click', showMainMenu);
