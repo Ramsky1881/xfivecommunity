@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XCECUTIVEFIVEID Community Hub</title>
+    <title>XCECUTIVEFIVEID Community</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Inter Font -->
@@ -301,6 +301,11 @@
                     <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                     WEBSITE
                 </button>
+                <!-- NEW PHOTO MEMBER BUTTON -->
+                <button id="photoMemberBtn" class="btn text-lg">
+                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    PHOTO MEMBER
+                </button>
             </div>
 
             <div>
@@ -387,9 +392,9 @@
     <!-- Website "Coming Soon" Modal -->
     <div id="comingSoonModalOverlay" class="modal-overlay" aria-hidden="true">
         <div class="modal-content">
-               <button id="comingSoonModalCloseBtn" class="modal-close-btn" aria-label="Tutup Modal">&times;</button>
-               <h3 class="text-2xl font-bold mb-4">Segera Hadir!</h3>
-               <p>Website kami sedang dalam pengembangan. Nantikan fitur-fitur menarik lainnya!</p>
+              <button id="comingSoonModalCloseBtn" class="modal-close-btn" aria-label="Tutup Modal">&times;</button>
+              <h3 class="text-2xl font-bold mb-4">Segera Hadir!</h3>
+              <p>Fitur ini sedang dalam pengembangan. Nantikan update menarik lainnya!</p>
         </div>
     </div>
 
@@ -406,6 +411,7 @@
         const isiBiodataBtn = document.getElementById('isiBiodataBtn');
         const changeNickBtn = document.getElementById('changeNickBtn');
         const websiteBtn = document.getElementById('websiteBtn');
+        const photoMemberBtn = document.getElementById('photoMemberBtn'); // New button selector
 
         // Modals
         const notificationModalOverlay = document.getElementById('notificationModalOverlay');
@@ -692,10 +698,15 @@
 
         // --- Main Menu Event Listeners ---
         isiBiodataBtn.addEventListener('click', showForm);
-        websiteBtn.addEventListener('click', () => {
+        
+        // Function to show the "Coming Soon" modal
+        const showComingSoonModal = () => {
             comingSoonModalOverlay.classList.add('show');
             setAriaHidden(comingSoonModalOverlay, false);
-        });
+        };
+
+        websiteBtn.addEventListener('click', showComingSoonModal);
+        photoMemberBtn.addEventListener('click', showComingSoonModal); // Added listener for the new button
         
         // Change Nickname Modal Logic (FIXED)
         const testerSelectChangeNick = document.getElementById('testerSelectChangeNick');
