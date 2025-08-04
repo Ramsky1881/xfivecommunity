@@ -245,15 +245,13 @@
             box-shadow: 0 0 0 5px rgba(0, 255, 255, 0.3);
             transform: scale(1.01);
         }
-        /* Specific styling for select dropdown options */
         select {
-            color: white; /* Default text color for select */
-            background-color: #1a1a1a; /* Dark background for the select box */
+            color: white;
+            background-color: #1a1a1a;
         }
-        /* Styling for the options within the select dropdown */
         select option {
-            background-color: #1a1a1a; /* Dark background for options */
-            color: white; /* White text for options */
+            background-color: #1a1a1a;
+            color: white;
         }
         .radio-group label {
             color: var(--text-color);
@@ -278,9 +276,34 @@
             margin-bottom: 15px;
             text-shadow: 0 0 5px var(--neon-blue);
         }
-        .agreement-checkbox-group input[type=checkbox] {
-            accent-color: var(--neon-blue);
+        
+        /* PENTING: Mengubah gaya untuk grup checkbox agar label menjadi clickable */
+        .agreement-checkbox-group {
+            display: flex;
+            align-items: center; /* Menyelaraskan item secara vertikal */
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+            cursor: pointer; /* Menambahkan kursor pointer untuk menunjukkan klik */
+            user-select: none; /* Mencegah seleksi teks */
         }
+
+        .agreement-checkbox-group input[type=checkbox] {
+            margin-top: 0; /* Menghapus margin atas yang tidak perlu */
+            margin-right: 12px;
+            width: 20px;
+            height: 20px;
+            accent-color: var(--neon-blue);
+            flex-shrink: 0; /* Mencegah checkbox mengecil */
+        }
+
+        .agreement-checkbox-group label {
+            font-weight: 500;
+            color: var(--text-color);
+            text-align: left;
+            margin-bottom: 0; /* Menghapus margin bawah pada label */
+        }
+
         #webcamVideo {
             width: 100%;
             max-width: 400px;
@@ -526,11 +549,15 @@
                         <h3>KEBIJAKAN PRIVASI</h3>
                         <p>Kebijakan Privasi ini adalah komitmen dari XFIVE untuk menghargai dan melindungi setiap data atau informasi pribadi. Kebijakan Privasi ini menetapkan dasar atas perolehan, pengumpulan, pengolahan, dan atau segala bentuk pengelolaan yang terkait.</p>
                     </div>
-                    <div class="agreement-checkbox-group">
-                        <input type="checkbox" id="agreeToRules">
-                        <label for="agreeToRules">Saya menyetujui semua syarat, ketentuan, dan kebijakan privasi yang berlaku.</label>
+                    <!-- Optimized checkbox for better click area -->
+                    <div class="mt-8 flex justify-center">
+                        <label for="agreeToRules" class="agreement-checkbox-group">
+                            <input type="checkbox" id="agreeToRules">
+                            <span>Saya menyetujui semua syarat, ketentuan, dan kebijakan privasi yang berlaku.</span>
+                        </label>
                     </div>
-                    <button type="button" id="continueButton" class="btn text-lg" disabled>Lanjutkan</button>
+                    
+                    <button type="button" id="continueButton" class="btn text-lg mt-8" disabled>Lanjutkan</button>
                 </div>
                 <!-- Face Detection Section -->
                 <div id="faceDetectionContainer" class="hidden" aria-hidden="true">
@@ -576,10 +603,13 @@
                         </div>
                         <div class="form-group"><label for="divisiCommunity">Divisi:</label><select id="divisiCommunity" name="divisiCommunity" required><option value="">Pilih</option><option value="Club">Club</option><option value="Com">Com</option></select></div>
                         <div class="form-group"><label for="tester">Pilih Tester:</label><select id="tester" name="tester" required><option value="">Pilih</option></select></div>
-                        <button type="submit" id="submitButton" class="btn">
-                            <span id="buttonText">Kirim Data</span>
-                            <span id="loadingSpinner" class="loading-spinner hidden"></span>
-                        </button>
+                        <!-- Optimized margin for submit button -->
+                        <div class="mt-8">
+                            <button type="submit" id="submitButton" class="btn">
+                                <span id="buttonText">Kirim Data</span>
+                                <span id="loadingSpinner" class="loading-spinner hidden"></span>
+                            </button>
+                        </div>
                     </form>
                 </div>
             `;
