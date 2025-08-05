@@ -363,6 +363,31 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* CSS Counters for Ordered List */
+        .rules-section ol {
+            list-style: none; /* Hapus penomoran default browser */
+            counter-reset: rule-counter; /* Inisialisasi counter */
+        }
+
+        .rules-section ol li {
+            counter-increment: rule-counter; /* Tingkatkan counter untuk setiap item daftar */
+            position: relative;
+            padding-left: 2.5rem; /* Beri ruang untuk nomor kustom */
+            margin-bottom: 0.5rem; /* Tambahkan spasi antar item daftar */
+        }
+
+        .rules-section ol li::before {
+            content: counter(rule-counter) "."; /* Tampilkan nilai counter */
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-weight: bold;
+            color: var(--neon-blue); /* Atur warna nomor */
+            width: 2rem; /* Pastikan ruang yang cukup untuk nomor dua digit */
+            text-align: right;
+            margin-right: 0.5rem;
+        }
     </style>
 </head>
 <body>
@@ -531,7 +556,7 @@
                     <div class="rules-section">
                         <p>Tujuan dibuat aturan yang sangat ketat untuk kepentingan bersama. Kami berkomitmen ingin menciptakan komunitas ini nyaman dan aman untuk siapa saja. Pastikan baca peraturan ini sebelum memulai diskusi.</p>
                         <h3>PERATURAN UMUM UNTUK SEMUA ANGGOTA</h3>
-                        <ol class="list-decimal pl-5">
+                        <ol>
                             <li>Menjunjung tinggi etika, adab, dan sopan santun kepada semua anggota.</li>
                             <li>Dilarang berdiskusi mendiskriminasi agama dan ras tertentu. Hindari juga berdiskusi SARA, dan politik. [SP/BANNED]</li>
                             <li>Hindari melepas title "X5" tanpa persetujuan moderator/staff. [SP/BANNED]</li>
