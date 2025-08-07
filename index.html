@@ -58,6 +58,12 @@
             100% { transform: rotate(360deg); }
         }
         
+        /* Broadcast Text Animation */
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
         /* --- General Styles --- */
         body {
             font-family: 'Inter', sans-serif;
@@ -350,6 +356,24 @@
         #passwordError {
             color: var(--error-color);
         }
+        
+        /* Broadcast Text Styles */
+        .broadcast-container {
+            overflow: hidden;
+            background-color: rgba(0, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 20px;
+            box-shadow: inset 0 0 5px var(--neon-blue);
+        }
+        .broadcast-text {
+            color: var(--neon-blue);
+            font-weight: 600;
+            white-space: nowrap;
+            display: inline-block;
+            animation: marquee 20s linear infinite;
+            text-shadow: 0 0 5px var(--neon-blue);
+        }
 
         /* Responsive adjustments for mobile */
         @media (max-width: 640px) {
@@ -400,6 +424,11 @@
                 <p class="text-gray-300 text-sm">Since 2017</p>
             </div>
             
+            <!-- Broadcast Text -->
+            <div class="broadcast-container">
+                <p class="broadcast-text">📢 Data Member Update 7 Agust 2025 | Selamat Datang Di XFIVE Community Ayodance</p>
+            </div>
+
             <div class="space-y-4">
                 <button id="isiBiodataBtn" class="btn text-lg">
                     <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="24" height="24" viewBox="0 0 24 24" fill="white">
@@ -504,9 +533,9 @@
     <!-- Website "Coming Soon" Modal -->
     <div id="comingSoonModalOverlay" class="modal-overlay" aria-hidden="true">
         <div class="modal-content">
-              <button id="comingSoonModalCloseBtn" class="modal-close-btn" aria-label="Tutup Modal">&times;</button>
-              <h3 class="text-2xl font-bold mb-4">Segera Hadir!</h3>
-              <p>Fitur ini sedang dalam pengembangan. Nantikan update menarik lainnya!</p>
+                <button id="comingSoonModalCloseBtn" class="modal-close-btn" aria-label="Tutup Modal">&times;</button>
+                <h3 class="text-2xl font-bold mb-4">Segera Hadir!</h3>
+                <p>Fitur ini sedang dalam pengembangan. Nantikan update menarik lainnya!</p>
         </div>
     </div>
 
