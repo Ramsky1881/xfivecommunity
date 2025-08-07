@@ -555,17 +555,27 @@
             color: var(--error-color);
         }
         
-        /* Broadcast Text Styles */
+        /* Broadcast Text Styles - PERBAIKAN UTAMA */
         .broadcast-container {
             overflow: hidden;
             background-color: rgba(0, 255, 255, 0.1);
             border-radius: 8px;
-            padding: 10px;
+            padding: 0; /* Diubah */
             margin-bottom: 20px;
             box-shadow: inset 0 0 5px var(--neon-blue);
             position: relative;
-            height: 30px;
+            height: 50px; /* Tinggi tetap */
+            display: flex;
+            align-items: center; /* Tengahkan vertikal */
             border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .broadcast-inner {
+            width: 100%;
+            position: relative;
+            height: 100%;
+            display: flex;
+            align-items: center;
         }
         
         .broadcast-text {
@@ -576,6 +586,7 @@
             text-shadow: 0 0 5px var(--neon-blue);
             font-family: 'Orbitron', sans-serif;
             animation: marquee 15s linear infinite;
+            line-height: 1; /* Pastikan tidak ada spasi ekstra */
         }
 
         /* CSS Counters for Ordered List */
@@ -617,7 +628,7 @@
             box-shadow: 0 0 5px var(--neon-green);
         }
         
-        /* Responsive adjustments for mobile */
+        /* Responsive adjustments for mobile - PERBAIKAN UTAMA */
         @media (max-width: 768px) {
             .container {
                 padding: 20px;
@@ -641,8 +652,13 @@
                 font-size: 1rem;
             }
             
-            h1 {
-                font-size: 2rem;
+            /* Perbaikan untuk judul di mobile */
+            .title-main {
+                font-size: 2.5rem; /* Ukuran lebih kecil */
+                line-height: 1.2; /* Spasi antar baris */
+                word-break: break-word; /* Mencegah kata terpotong */
+                padding: 0 10px; /* Padding tambahan */
+                text-align: center; /* Pusatkan teks */
             }
             
             .broadcast-text {
@@ -657,6 +673,12 @@
             
             .container {
                 padding: 15px;
+            }
+            
+            /* Perbaikan tambahan untuk judul di layar kecil */
+            .title-main {
+                font-size: 1.8rem; /* Ukuran lebih kecil lagi */
+                letter-spacing: 0; /* Kurangi spasi huruf */
             }
             
             .rules-section {
@@ -678,13 +700,16 @@
     <div id="mainMenu" class="main-menu-wrapper" aria-hidden="false">
         <div class="container text-center space-y-6 animate-initial-load">
             <div>
-                <h1 class="text-4xl md:text-5xl font-extrabold tracking-wider mb-2 glitch-text">XCECUTIVEFIVEID</h1>
+                <!-- Perbaikan judul untuk mobile -->
+                <h1 class="text-4xl md:text-5xl font-extrabold tracking-wider mb-2 glitch-text title-main">XCECUTIVEFIVEID</h1>
                 <p class="text-gray-300 text-sm tracking-widest">SINCE 2017</p>
             </div>
             
-            <!-- Broadcast Text -->
+            <!-- Broadcast Text - Perbaikan struktur -->
             <div class="broadcast-container">
-                <div class="broadcast-text">📢 DATA MEMBER UPDATE 7 AGUST 2025 | SELAMAT DATANG DI XFIVE COMMUNITY AYODANCE</div>
+                <div class="broadcast-inner">
+                    <p class="broadcast-text">📢 DATA MEMBER UPDATE 7 AGUST 2025 | SELAMAT DATANG DI XFIVE COMMUNITY AYODANCE</p>
+                </div>
             </div>
 
             <div class="space-y-4">
@@ -703,7 +728,7 @@
                     WEBSITE
                 </button>
                 <a href="https://xfivemember2025.netlify.app/" target="_blank" class="btn text-lg">
-                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                     PHOTO MEMBER
                 </a>
             </div>
