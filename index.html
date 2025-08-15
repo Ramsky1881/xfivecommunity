@@ -10,6 +10,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Cyberpunk Font -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiWEZJdmUgQ29tbXVuaXR5IEh1YiIsInNob3J0X25hbWUiOiJYRklWRSIsInN0YXJ0X3VybCI6Ii8iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjMDAwMDAwIiwidGhlbWVfY29sb3IiOiIjMDBGRkZGIiwiaWNvbnMiOlt7InNyYyI6Imh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9tb2Rlcm5maXJtd2ViL2ljb25zL21hc3Rlci9pY29uLTE5MngxOTIucG5nIiwic2l6ZXMiOiIxOTJ4MTkyIiwidHlwZSI6ImltYWdlL3BuZyJ9LHsic3JjIjoiaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL21vZGVybmZpcm13ZWIvaWNvbnMvbWFzdGVyL2ljb24tNTEyeDUxMi5wbmciLCJzaXplcyI6IjUxMng1MTIiLCJ0eXBlIjoiaW1hZ2UvcG5nIn1dfQ==">
+    
     <style>
         /* CSS Variables for cyberpunk theme */
         :root {
@@ -24,6 +28,63 @@
             --glitch-color1: var(--neon-blue);
             --glitch-color2: var(--neon-pink);
             --scanline-color: rgba(0, 255, 255, 0.05);
+            
+            /* Light mode variables */
+            --light-bg: #f0f2f5;
+            --light-text: #333;
+            --light-card-bg: #ffffff;
+            --light-border: #e0e0e0;
+            --light-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        /* Light mode styles */
+        body.light-mode {
+            background-color: var(--light-bg);
+            color: var(--light-text);
+        }
+
+        body.light-mode .container {
+            background-color: var(--light-card-bg);
+            border: 1px solid var(--light-border);
+            box-shadow: var(--light-shadow);
+            color: var(--light-text);
+        }
+
+        body.light-mode .btn {
+            background-color: var(--light-card-bg);
+            color: var(--light-text);
+            border: 1px solid var(--light-border);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        body.light-mode .btn:hover {
+            background-color: #f0f0f0;
+        }
+
+        body.light-mode h1, 
+        body.light-mode h2, 
+        body.light-mode h3 {
+            color: var(--neon-purple);
+        }
+
+        body.light-mode .broadcast-container {
+            background-color: #eef7ff;
+            border: 1px solid #cce5ff;
+        }
+
+        body.light-mode .broadcast-text {
+            color: var(--neon-purple);
+        }
+
+        body.light-mode .terminal-text {
+            background-color: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            color: #333;
+        }
+
+        body.light-mode .rules-section {
+            background-color: #f8f9fa;
+            border: 1px solid #e0e0e0;
         }
 
         /* --- Animations --- */
@@ -84,6 +145,17 @@
             100% { transform: translateY(0) translateX(0); opacity: 0; }
         }
 
+        /* Notification Animation */
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        @keyframes slideOutRight {
+            from { transform: translateX(0); }
+            to { transform: translateX(100%); }
+        }
+
         /* --- General Styles --- */
         body {
             font-family: 'Inter', sans-serif;
@@ -102,6 +174,7 @@
             overflow-x: hidden;
             position: relative;
             animation: backgroundPan 60s linear infinite alternate;
+            transition: background-color 0.5s, color 0.5s;
         }
         
         /* Scanlines overlay */
@@ -685,9 +758,311 @@
                 font-size: 0.9rem;
             }
         }
+        
+        /* === NEW FEATURES STYLES === */
+        
+        /* Dark Mode Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            border: 1px solid var(--neon-blue);
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px var(--neon-blue);
+        }
+        
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--neon-blue);
+            transition: all 0.3s ease;
+        }
+        
+        /* Music Toggle */
+        .music-toggle {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            border: 1px solid var(--neon-blue);
+            transition: all 0.3s ease;
+        }
+        
+        .music-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px var(--neon-blue);
+        }
+        
+        .music-toggle svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--neon-blue);
+            transition: all 0.3s ease;
+        }
+        
+        .music-toggle.active svg {
+            fill: var(--neon-pink);
+        }
+        
+        /* AI Chat Assistant */
+        .chat-bubble {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            animation: pulse 2s infinite;
+            border: 2px solid white;
+        }
+        
+        .chat-bubble .notification {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--neon-pink);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 0 5px var(--neon-pink);
+        }
+        
+        .chat-bubble svg {
+            width: 30px;
+            height: 30px;
+            fill: white;
+        }
+        
+        .chat-modal {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 300px;
+            background: rgba(0, 0, 0, 0.9);
+            border-radius: 15px;
+            border: 1px solid var(--neon-blue);
+            box-shadow: 0 0 20px var(--neon-purple);
+            z-index: 1000;
+            transform: scale(0);
+            transform-origin: bottom right;
+            transition: transform 0.3s ease;
+            padding: 20px;
+        }
+        
+        .chat-modal.open {
+            transform: scale(1);
+        }
+        
+        .chat-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+            padding-bottom: 10px;
+        }
+        
+        .chat-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+        
+        .chat-header .status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--neon-green);
+            margin-left: 10px;
+            box-shadow: 0 0 5px var(--neon-green);
+        }
+        
+        .chat-content {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .chat-content p {
+            margin: 0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 20px;
+            border: 1px solid var(--neon-blue);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+        }
+        
+        .chat-input button {
+            background: var(--neon-blue);
+            border: none;
+            border-radius: 20px;
+            color: black;
+            padding: 0 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        /* Real-time Notifications */
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .notification {
+            background: rgba(0, 0, 0, 0.9);
+            border-left: 4px solid var(--neon-blue);
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            width: 300px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            transform: translateX(100%);
+            animation: slideInRight 0.3s forwards, slideOutRight 0.3s forwards 4.7s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .notification::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--neon-blue);
+            animation: progressBar 5s linear forwards;
+        }
+        
+        .notification h4 {
+            margin: 0 0 5px 0;
+            color: var(--neon-blue);
+            font-size: 1rem;
+        }
+        
+        .notification p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        
+        @keyframes progressBar {
+            from { width: 100%; }
+            to { width: 0; }
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 255, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0); }
+        }
     </style>
 </head>
 <body>
+    <!-- Dark Mode Toggle -->
+    <div class="theme-toggle" id="themeToggle">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M12,18c-3.3,0-6-2.7-6-6s2.7-6,6-6s6,2.7,6,6S15.3,18,12,18zM12,8c-2.2,0-4,1.8-4,4c0,2.2,1.8,4,4,4c2.2,0,4-1.8,4-4C16,9.8,14.2,8,12,8z"/>
+            <path d="M12,4c-0.6,0-1-0.4-1-1V1c0-0.6,0.4-1,1-1s1,0.4,1,1v2C13,3.6,12.6,4,12,4z"/>
+            <path d="M12,24c-0.6,0-1-0.4-1-1v-2c0-0.6,0.4-1,1-1s1,0.4,1,1v2C13,23.6,12.6,24,12,24z"/>
+            <path d="M5.6,6.6c-0.3,0-0.5-0.1-0.7-0.3L3.5,4.9c-0.4-0.4-0.4-1,0-1.4s1-0.4,1.4,0l1.4,1.4c0.4,0.4,0.4,1,0,1.4C6.1,6.5,5.9,6.6,5.6,6.6z"/>
+            <path d="M19.8,20.8c-0.3,0-0.5-0.1-0.7-0.3l-1.4-1.4c-0.4-0.4-0.4-1,0-1.4s1-0.4,1.4,0l1.4,1.4c0.4,0.4,0.4,1,0,1.4C20.3,20.7,20.1,20.8,19.8,20.8z"/>
+            <path d="M3,13H1c-0.6,0-1-0.4-1-1s0.4-1,1-1h2c0.6,0,1,0.4,1,1S3.6,13,3,13z"/>
+            <path d="M23,13h-2c-0.6,0-1-0.4-1-1s0.4-1,1-1h2c0.6,0,1,0.4,1,1S23.6,13,23,13z"/>
+            <path d="M4.2,20.8c-0.3,0-0.5-0.1-0.7-0.3c-0.4-0.4-0.4-1,0-1.4l1.4-1.4c0.4-0.4,1-0.4,1.4,0s0.4,1,0,1.4l-1.4,1.4C4.7,20.7,4.5,20.8,4.2,20.8z"/>
+            <path d="M18.4,6.6c-0.3,0-0.5-0.1-0.7-0.3c-0.4-0.4-0.4-1,0-1.4l1.4-1.4c0.4-0.4,1-0.4,1.4,0s0.4,1,0,1.4l-1.4,1.4C18.9,6.5,18.7,6.6,18.4,6.6z"/>
+        </svg>
+    </div>
+    
+    <!-- Music Toggle -->
+    <div class="music-toggle" id="musicToggle">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+        </svg>
+    </div>
+    
+    <!-- Background Music -->
+    <audio id="bgMusic" loop>
+        <source src="https://assets.codepen.io/1468070/cyberpunk-synthwave.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- AI Chat Assistant -->
+    <div class="chat-bubble" id="chatBubble">
+        <div class="notification">!</div>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z"/>
+        </svg>
+    </div>
+    
+    <div class="chat-modal" id="chatModal">
+        <div class="chat-header">
+            <h3>AI Assistant</h3>
+            <div class="status"></div>
+        </div>
+        <div class="chat-content">
+            <p>Halo! Saya AI Assistant XFIVE. Fitur ini masih dalam pengembangan. Versi lengkap akan segera hadir dengan kemampuan untuk menjawab semua pertanyaan seputar komunitas kami.</p>
+            <p class="terminal-text">> STATUS: BETA DEVELOPMENT<br>> VERSION: 0.5.1<br>> ETA: Q4 2025</p>
+        </div>
+        <div class="chat-input">
+            <input type="text" placeholder="Tulis pesan..." disabled>
+            <button disabled>Kirim</button>
+        </div>
+    </div>
+    
+    <!-- Notification Container -->
+    <div class="notification-container" id="notificationContainer"></div>
+
     <!-- Particle Effects -->
     <div class="particles" id="particles"></div>
 
@@ -825,6 +1200,88 @@
     <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // ===== NEW FEATURES FUNCTIONALITY =====
+            
+            // Dark Mode Toggle
+            const themeToggle = document.getElementById('themeToggle');
+            themeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('light-mode');
+                const isLightMode = document.body.classList.contains('light-mode');
+                localStorage.setItem('lightMode', isLightMode);
+                showNotification('Mode Tampilan', `Berhasil diubah ke ${isLightMode ? 'Light Mode' : 'Dark Mode'}`);
+            });
+            
+            // Initialize theme from localStorage
+            if (localStorage.getItem('lightMode') === 'true') {
+                document.body.classList.add('light-mode');
+            }
+            
+            // Background Music Control
+            const musicToggle = document.getElementById('musicToggle');
+            const bgMusic = document.getElementById('bgMusic');
+            let musicPlaying = false;
+            
+            musicToggle.addEventListener('click', () => {
+                if (musicPlaying) {
+                    bgMusic.pause();
+                    musicToggle.classList.remove('active');
+                } else {
+                    bgMusic.play().catch(e => console.log('Autoplay prevented:', e));
+                    musicToggle.classList.add('active');
+                }
+                musicPlaying = !musicPlaying;
+                showNotification('Musik Latar', `Musik ${musicPlaying ? 'dinyalakan' : 'dimatikan'}`);
+            });
+            
+            // AI Chat Assistant
+            const chatBubble = document.getElementById('chatBubble');
+            const chatModal = document.getElementById('chatModal');
+            
+            chatBubble.addEventListener('click', () => {
+                chatModal.classList.toggle('open');
+                chatBubble.querySelector('.notification').style.display = 'none';
+            });
+            
+            // Close chat modal when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!chatModal.contains(e.target) && !chatBubble.contains(e.target)) {
+                    chatModal.classList.remove('open');
+                }
+            });
+            
+            // Real-time Notifications
+            const notificationContainer = document.getElementById('notificationContainer');
+            
+            function showNotification(title, message) {
+                const notification = document.createElement('div');
+                notification.className = 'notification';
+                notification.innerHTML = `
+                    <h4>${title}</h4>
+                    <p>${message}</p>
+                `;
+                notificationContainer.appendChild(notification);
+                
+                // Remove after animation completes
+                setTimeout(() => {
+                    notification.remove();
+                }, 5000);
+            }
+            
+            // Random notifications for demo
+            const notifications = [
+                {title: 'Pembaruan Sistem', message: 'Server diperbarui untuk performa lebih baik'},
+                {title: 'Event Mendatang', message: 'Turnamen Ayodance akan dimulai minggu depan'},
+                {title: 'Pemberitahuan', message: 'Jangan lupa isi biodata jika belum'},
+                {title: 'Komunitas', message: 'Ada 5 member baru bergabung hari ini'}
+            ];
+            
+            setInterval(() => {
+                if (Math.random() > 0.7) {
+                    const notif = notifications[Math.floor(Math.random() * notifications.length)];
+                    showNotification(notif.title, notif.message);
+                }
+            }, 15000);
+            
             // Create particles for cyberpunk effect
             const particlesContainer = document.getElementById('particles');
             const particleCount = 50;
@@ -1216,12 +1673,18 @@
                         setAriaHidden(notificationModal.overlay, false);
                         memberFormContainer.classList.add('hidden');
                         setAriaHidden(memberFormContainer, true);
+                        
+                        // Show notification
+                        showNotification('Pendaftaran Sukses', 'Data Anda berhasil dikirim!');
                     } catch (error) {
                         console.error('Error submitting form:', error);
                         notificationModal.title.textContent = 'Terjadi Kesalahan';
                         notificationModal.message.innerHTML = 'Maaf, data Anda gagal dikirim. Silakan coba lagi nanti.';
                         notificationModal.overlay.classList.add('show');
                         setAriaHidden(notificationModal.overlay, false);
+                        
+                        // Show error notification
+                        showNotification('Kesalahan Sistem', 'Gagal mengirim data. Silakan coba lagi.');
                     } finally {
                         submitButton.disabled = false;
                         buttonText.textContent = 'Kirim Data';
@@ -1284,6 +1747,9 @@
                 downloadChangeNickQrBtn.download = `qr-ganti-nick-${testerName}.png`;
                 
                 changeNickQrSection.classList.remove('hidden');
+                
+                // Show notification
+                showNotification('Tester Dipilih', `QR untuk ${testerName} berhasil dibuat`);
             });
 
             document.querySelectorAll('.modal-overlay').forEach(overlay => {
@@ -1317,7 +1783,74 @@
                     });
                 });
             });
+            
+            // === PWA Installation Support ===
+            let deferredPrompt;
+            
+            // Listen for beforeinstallprompt event
+            window.addEventListener('beforeinstallprompt', (e) => {
+                // Prevent Chrome 67 and earlier from automatically showing the prompt
+                e.preventDefault();
+                // Stash the event so it can be triggered later
+                deferredPrompt = e;
+                
+                // Show custom install prompt
+                showNotification('Install Aplikasi', 'XFIVE Community Hub dapat diinstall ke perangkat Anda!');
+            });
+            
+            // Service Worker Registration
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/service-worker.js')
+                        .then(registration => {
+                            console.log('ServiceWorker registered: ', registration);
+                        })
+                        .catch(error => {
+                            console.log('ServiceWorker registration failed: ', error);
+                        });
+                });
+            }
         });
+    </script>
+    
+    <!-- Service Worker for PWA -->
+    <script>
+        // This script is for the service worker, but included inline for simplicity
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('data:application/javascript;base64,' + btoa(`
+                // Simple service worker for caching
+                const CACHE_NAME = 'xfive-cache-v1';
+                const urlsToCache = [
+                    '/',
+                    '/index.html',
+                    '/styles.css',
+                    '/app.js',
+                    '/cyberpunk-synthwave.mp3'
+                ];
+                
+                self.addEventListener('install', event => {
+                    event.waitUntil(
+                        caches.open(CACHE_NAME)
+                            .then(cache => {
+                                return cache.addAll(urlsToCache);
+                            })
+                    );
+                });
+                
+                self.addEventListener('fetch', event => {
+                    event.respondWith(
+                        caches.match(event.request)
+                            .then(response => {
+                                return response || fetch(event.request);
+                            })
+                    );
+                });
+            `)).then(registration => {
+                console.log('Service Worker registered with scope:', registration.scope);
+            }).catch(error => {
+                console.log('Service Worker registration failed:', error);
+            });
+        }
     </script>
 </body>
 </html>
