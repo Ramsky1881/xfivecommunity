@@ -4,14 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>XCECUTIVEFIVEID | XFIVE | Ayodance</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Cyberpunk Font -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     
-    <!-- PWA Manifest (as data URI) -->
     <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiWEZJdmUgQ29tbXVuaXR5IEh1YiIsInNob3J0X25hbWUiOiJYRklWRSIsInN0YXJ0X3VybCI6Ii8iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjMDAwMDAwIiwidGhlbWVfY29sb3IiOiIjMDBGRkZGIiwiaWNvbnMiOlt7InNyYyI6Imh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9tb2Rlcm5maXJtd2ViL2ljb25zL21hc3Rlci9pY29uLTE5MngxOTIucG5nIiwic2l6ZXMiOiIxOTJ4MTkyIiwidHlwZSI6ImltYWdlL3BuZyJ9LHsic3JjIjoiaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL21vZGVybmZpcm13ZWIvaWNvbnMvbWFzdGVyL2ljb24tNTEyeDUxMi5wbmciLCJzaXplcyI6IjUxMng1MTIiLCJ0eXBlIjoiaW1hZ2UvcG5nIn1dfQ==">
     
     <style>
@@ -1071,7 +1067,6 @@
     </style>
 </head>
 <body>
-    <!-- AI Chat Assistant -->
     <div class="chat-bubble" id="chatBubble">
         <div class="notification">!</div>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -1094,28 +1089,22 @@
         </div>
     </div>
     
-    <!-- Notification Container -->
     <div class="notification-container">
-        <!-- Single notification element, will be reused -->
         <div id="reusableNotification" class="notification">
             <h4 id="notificationTitle"></h4>
             <p id="notificationMessage"></p>
         </div>
     </div>
 
-    <!-- Particle Effects -->
     <div class="particles" id="particles"></div>
 
-    <!-- Main Menu -->
     <div id="mainMenu" class="main-menu-wrapper" aria-hidden="false">
         <div class="container text-center space-y-6 animate-initial-load">
             <div>
-                <!-- Perbaikan judul untuk mobile -->
                 <h1 class="text-4xl md:text-5xl font-extrabold tracking-wider mb-2 glitch-text title-main">XFIVEID | X5</h1>
                 <p class="text-gray-300 text-sm tracking-widest">SINCE 2017</p>
             </div>
             
-            <!-- Broadcast Text - Perbaikan struktur -->
             <div class="broadcast-container">
                 <div class="broadcast-inner">
                     <p class="broadcast-text">📢 SELAMAT DATANG DI XFIVE COMMUNITY AYODANCE | XcecutiveFiveID | X5</p>
@@ -1141,7 +1130,11 @@
                     <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                     PHOTO MEMBER
                 </a>
-            </div>
+                <a href="https://xfiveai2025.netlify.app/" target="_blank" class="btn text-lg">
+                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect x="4" y="8" width="8" height="12" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2v-2"/><path d="M15 13a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2z"/></svg>
+                    XFIVE AI 2025
+                </a>
+                </div>
 
             <div>
                 <p class="font-semibold mb-4 text-gray-300 tracking-widest">@FOLLOW US SOCIAL MEDIA</p>
@@ -1167,20 +1160,15 @@
         </div>
     </div>
 
-    <!-- Registration Form Wrapper (Initially Hidden) -->
     <div id="formWrapper" class="main-content-wrapper hidden" aria-hidden="true">
         <div class="container fade-in">
-            <!-- All form steps will be injected here by JS -->
-        </div>
+            </div>
     </div>
 
-    <!-- All Modals -->
-    <!-- Registration Success Modal -->
     <div id="notificationModalOverlay" class="modal-overlay" aria-hidden="true">
         <div class="modal-content">
             <button id="modalCloseBtn" class="modal-close-btn" aria-label="Tutup Modal">&times;</button>
             
-            <!-- Passport Cyberpunk -->
             <div id="passportContainer" class="cyberpunk-passport">
                 <div class="passport-header">
                     <div class="logo">XFIVE</div>
@@ -1192,8 +1180,7 @@
                         <div class="cyberpunk-avatar">
                             <div class="avatar-initials" id="avatarInitials">X5</div>
                             <div class="avatar-icon">
-                                <!-- Icon cyberpunk -->
-                            </div>
+                                </div>
                         </div>
                     </div>
                     <div class="passport-details">
@@ -1251,7 +1238,6 @@
         </div>
     </div>
 
-    <!-- Change Nickname Modal -->
     <div id="changeNickModalOverlay" class="modal-overlay" aria-hidden="true">
         <div class="modal-content">
             <button id="changeNickModalCloseBtn" class="modal-close-btn" aria-label="Tutup Modal">&times;</button>
@@ -1260,10 +1246,8 @@
             <div class="form-group">
                 <select id="testerSelectChangeNick" class="w-full p-3 border rounded-lg text-white bg-[#1a1a1a]">
                     <option value="">-- Pilih Tester --</option>
-                    <!-- Options will be populated by JS -->
-                </select>
+                    </select>
             </div>
-            <!-- UPDATED QR SECTION FOR CHANGE NICKNAME -->
             <div id="changeNickQrSection" class="hidden mt-6">
                 <div class="flex flex-col sm:flex-row items-center justify-center gap-6">
                     <div id="changeNickQrContainer" class="qr-code-container mt-0"></div>
@@ -1279,7 +1263,6 @@
         </div>
     </div>
 
-    <!-- Website "Coming Soon" Modal -->
     <div id="comingSoonModalOverlay" class="modal-overlay" aria-hidden="true">
         <div class="modal-content">
                 <button id="comingSoonModalCloseBtn" class="modal-close-btn" aria-label="Tutup Modal">&times;</button>
@@ -1431,7 +1414,6 @@
                     <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
                     Kembali ke Menu
                 </button>
-                <!-- Rules Section -->
                 <div id="rulesContainer">
                     <h2 class="text-3xl font-bold text-center mb-8 glitch-text">PERATURAN KOMUNITAS X5</h2>
                     <div class="rules-section">
@@ -1455,7 +1437,6 @@
                         <h3>KEBIJAKAN PRIVASI</h3>
                         <p>Kebijakan Privasi ini adalah komitmen dari XFIVE untuk menghargai dan melindungi setiap data atau informasi pribadi. Kebijakan Privasi ini menetapkan dasar atas perolehan, pengumpulan, pengolahan, dan atau segala bentuk pengelolaan yang terkait.</p>
                     </div>
-                    <!-- Optimized checkbox for better click area -->
                     <div class="mt-8 flex justify-center">
                         <label for="agreeToRules" class="agreement-checkbox-group">
                             <input type="checkbox" id="agreeToRules">
@@ -1465,7 +1446,6 @@
                     
                     <button type="button" id="continueButton" class="btn text-lg mt-8" disabled>Lanjutkan</button>
                 </div>
-                <!-- Face Detection Section -->
                 <div id="faceDetectionContainer" class="hidden" aria-hidden="true">
                     <h2 class="text-3xl font-bold text-center mb-8 glitch-text">PENDETEKSI WAJAH</h2>
                     <p class="text-center mb-4">Untuk verifikasi, kami perlu akses kamera Anda. Tidak ada data wajah yang disimpan.</p>
@@ -1474,7 +1454,6 @@
                     <button type="button" id="startWebcamButton" class="btn text-lg">Mulai Deteksi</button>
                     <button type="button" id="continueToFormButton" class="btn text-lg" disabled>Lanjutkan</button>
                 </div>
-                <!-- Scratch Card Section -->
                 <div id="scratchCardContainer" class="hidden" aria-hidden="true">
                     <h2 class="text-3xl font-bold text-center mb-2 glitch-text">VERIFIKASI FINAL!</h2>
                     <p class="mb-6 text-center">Password Singkatan dari XcecutiveFiveID</p>
@@ -1488,7 +1467,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- Member Registration Form -->
                 <div id="memberFormContainer" class="hidden" aria-hidden="true">
                     <h1 class="text-3xl font-bold text-center mb-8 glitch-text">FORMULIR PENDATAAN MEMBER</h1>
                     <form id="memberForm">
@@ -1509,7 +1487,6 @@
                         </div>
                         <div class="form-group"><label for="divisiCommunity">Divisi:</label><select id="divisiCommunity" name="divisiCommunity" required><option value="">Pilih</option><option value="Club">Club</option><option value="Com">Com</option></select></div>
                         <div class="form-group"><label for="tester">Pilih Tester:</label><select id="tester" name="tester" required><option value="">Pilih</option></select></div>
-                        <!-- Optimized margin for submit button -->
                         <div class="mt-8">
                             <button type="submit" id="submitButton" class="btn">
                                 <span id="buttonText">Kirim Data</span>
@@ -1941,7 +1918,6 @@
         );
     </script>
     
-    <!-- Service Worker for PWA -->
     <script>
         // This script is for the service worker, but included inline for simplicity
         if ('serviceWorker' in navigator) {
