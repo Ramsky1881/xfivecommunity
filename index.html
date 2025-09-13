@@ -8,12 +8,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     
-    <!-- Load MediaPipe libraries - UPDATED TO STABLE VERSIONS -->
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3/camera_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils@0.6/control_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils@0.3/drawing_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4/face_mesh.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4/hands.js" crossorigin="anonymous"></script>
+    <!-- Load MediaPipe libraries - UPDATED TO SPECIFIC STABLE VERSIONS -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3.1640029074/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils@0.6.1629159505/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils@0.3.1620248257/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4.1633559611/face_mesh.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915/hands.js" crossorigin="anonymous"></script>
     
     <!-- Tetap mempertahankan manifest dan styling yang sudah ada -->
     <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiWEZJdmUgQ29tbXVuaXR5IEh1YiIsInNob3J0X25hbWUiOiJYRklWRSIsInN0YXJ0X3VybCI6Ii8iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjMDAwMDAwIiwidGhlbWVfY29sb3IiOiIjMDBGRkZGIiwiaWNvbnMiOlt7InNyYyI6Imh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9tb2Rlcm5maXJtd2ViL2ljb25zL21hc3Rlci9pY29uLTE5MngxOTIucG5nIiwic2l6ZXMiOiIxOTJ4MTkyIiwidHlwZSI6ImltYWdlL3BuZyJ9LHsic3JjIjoiaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL21vZGVybmZpcm13ZWIvaWNvbnMvbWFzdGVyL2ljb24tNTEyeDUxMi5wbmciLCJzaXplcyI6IjUxMng1MTIiLCJ0eXBlIjoiaW1hZ2UvcG5nIn1dfQ==">
@@ -1158,6 +1158,11 @@
             box-shadow: 0 0 10px var(--neon-blue);
             animation: pulseBorder 2s infinite;
         }
+
+        /* PERBAIKAN: Mengubah warna teks di dalam langkah verifikasi */
+        .liveness-step span:not(.liveness-icon) {
+            color: var(--text-color);
+        }
         
         .progress-container {
             width: 100%;
@@ -1748,7 +1753,7 @@
                 return new Promise((resolve, reject) => {
                     faceMesh = new FaceMesh({
                         locateFile: (file) => {
-                            return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4/${file}`;
+                            return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4.1633559611/${file}`;
                         }
                     });
                     
@@ -1777,7 +1782,7 @@
                 return new Promise((resolve, reject) => {
                     hands = new Hands({
                         locateFile: (file) => {
-                            return `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4/${file}`;
+                            return `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915/${file}`;
                         }
                     });
                     
@@ -1990,10 +1995,9 @@
                         faceDetectionMessage.textContent = 'Memuat model AI...';
                         
                         try {
-                            await Promise.all([
-                                loadFaceMeshModel(),
-                                loadHandsModel()
-                            ]);
+                            // Load models sequentially to prevent race conditions
+                            await loadFaceMeshModel();
+                            await loadHandsModel();
 
                             faceDetectionMessage.textContent = 'Meminta akses kamera...';
                             mediaStream = await navigator.mediaDevices.getUserMedia({ 
