@@ -74,7 +74,7 @@
         @keyframes marquee {
             0% { transform: translateX(100%); }
             100% { transform
-            : translateX(-100%); }
+              : translateX(-100%); }
         }
         
         /* Cyberpunk Scanlines */
@@ -530,15 +530,9 @@
             margin: 20px auto;
             display: block;
             border: 4px solid var(--neon-blue);
-            transition: border-color .5s ease-in-out, box-shadow .5s ease-in-out;
+            transition: border-color .5s ease-in-out;
         }
         
-        /* Tambahkan class ini untuk efek border pulsing */
-        #webcamVideo.active-scan {
-            animation: pulseBorder 2s infinite ease-in-out;
-            border-color: var(--neon-green);
-        }
-
         #scratchCardWrapper {
             box-shadow: 0 10px 30px rgba(0, 255, 255, 0.15);
             border-radius: 12px;
@@ -1149,8 +1143,8 @@
                 <a href="https://xfiveai2025.netlify.app/" target="_blank" class="btn text-lg">
                     <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect x="4" y="8" width="8" height="12" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2"/><path d="M15 13a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2z"/></svg>
                     XFIVE AI 2025
-                </button>
-            </div>
+                </a>
+                </div>
 
             <div>
                 <p class="font-semibold mb-4 text-gray-300 tracking-widest">@FOLLOW US SOCIAL MEDIA</p>
@@ -1295,26 +1289,6 @@
     <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script>
-        
-        function setSelectOptionColors(selectElement) {
-            if (selectElement) {
-                selectElement.style.color = 'white';
-                selectElement.style.backgroundColor = '#1a1a1a';
-                selectElement.addEventListener('focus', () => {
-                    Array.from(selectElement.options).forEach(option => {
-                        option.style.color = 'white';
-                        option.style.backgroundColor = '#1a1a1a';
-                    });
-                });
-                selectElement.addEventListener('blur', () => {
-                    Array.from(selectElement.options).forEach(option => {
-                        option.style.color = 'white';
-                        option.style.backgroundColor = '#1a1a1a';
-                    });
-                });
-            }
-        }
-        
         document.addEventListener('DOMContentLoaded', function() {
             // === NEW FEATURES FUNCTIONALITY ===
             
@@ -1558,14 +1532,12 @@
                     <button type="button" id="continueButton" class="btn text-lg mt-8" disabled>Lanjutkan</button>
                 </div>
                 <div id="faceDetectionContainer" class="hidden" aria-hidden="true">
-                    <h2 class="text-3xl font-bold text-center mb-8 glitch-text">PILIHAN VERIFIKASI</h2>
-                    <p class="text-center mb-4">Anda dapat menggunakan kamera untuk verifikasi. Ini tidak wajib dan tidak ada data yang disimpan.</p>
+                    <h2 class="text-3xl font-bold text-center mb-8 glitch-text">PENDETEKSI WAJAH</h2>
+                    <p class="text-center mb-4">Untuk verifikasi, kami perlu akses kamera Anda. Tidak ada data wajah yang disimpan.</p>
                     <video id="webcamVideo" autoplay muted playsinline></video>
-                    <p id="faceDetectionMessage" class="text-center" role="status" aria-live="polite">Pilih opsi di bawah untuk melanjutkan.</p>
-                    <div class="flex flex-col sm:flex-row gap-4 mt-6">
-                        <button type="button" id="startWebcamButton" class="btn text-lg">Mulai Verifikasi Kamera</button>
-                        <button type="button" id="skipVerificationButton" class="btn text-lg">Lewati Verifikasi</button>
-                    </div>
+                    <p id="faceDetectionMessage" class="text-center" role="status" aria-live="polite">Menunggu akses kamera...</p>
+                    <button type="button" id="startWebcamButton" class="btn text-lg">Mulai Deteksi</button>
+                    <button type="button" id="continueToFormButton" class="btn text-lg" disabled>Lanjutkan</button>
                 </div>
                 <div id="scratchCardContainer" class="hidden" aria-hidden="true">
                     <h2 class="text-3xl font-bold text-center mb-2 glitch-text">VERIFIKASI FINAL!</h2>
@@ -1658,7 +1630,6 @@
                 const faceDetectionMessage = document.getElementById('faceDetectionMessage');
                 const startWebcamButton = document.getElementById('startWebcamButton');
                 const continueToFormButton = document.getElementById('continueToFormButton');
-                const skipVerificationButton = document.getElementById('skipVerificationButton'); // New button
                 const scratchCanvas = document.getElementById('scratchCanvas');
                 const scratchCardWrapper = document.getElementById('scratchCardWrapper');
                 const verifyPasswordButton = document.getElementById('verifyPasswordButton');
@@ -1693,7 +1664,24 @@
                     testerSelect.appendChild(option);
                 });
 
-                
+                function setSelectOptionColors(selectElement) {
+                    if (selectElement) {
+                        selectElement.style.color = 'white';
+                        selectElement.style.backgroundColor = '#1a1a1a';
+                        selectElement.addEventListener('focus', () => {
+                            Array.from(selectElement.options).forEach(option => {
+                                option.style.color = 'white';
+                                option.style.backgroundColor = '#1a1a1a';
+                            });
+                        });
+                        selectElement.addEventListener('blur', () => {
+                            Array.from(selectElement.options).forEach(option => {
+                                option.style.color = 'white';
+                                option.style.backgroundColor = '#1a1a1a';
+                            });
+                        });
+                    }
+                }
                 setSelectOptionColors(testerSelect);
                 setSelectOptionColors(divisiCommunitySelect);
 
@@ -1708,74 +1696,29 @@
                     setAriaHidden(faceDetectionContainer, false);
                     faceDetectionContainer.classList.add('fade-in');
                 });
-                
-                // === LOGIC BARU UNTUK VERIFIKASI WAJAH ===
                 startWebcamButton.addEventListener('click', async () => {
                     startWebcamButton.disabled = true;
-                    skipVerificationButton.disabled = true; // Nonaktifkan tombol lewati
                     faceDetectionMessage.textContent = 'Memulai kamera...';
                     try {
                         const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
                         webcamVideo.srcObject = mediaStream;
                         await webcamVideo.play();
-
-                        // Cek apakah video sudah bisa diputar sebelum lanjut
-                        webcamVideo.onloadeddata = () => {
-                            faceDetectionMessage.textContent = 'Kamera aktif. Silakan posisikan wajah Anda.';
-                            webcamVideo.classList.add('active-scan');
-                            
-                            // Sembunyikan tombol "Mulai" dan "Lewati", tampilkan tombol "Lanjutkan"
-                            startWebcamButton.classList.add('hidden');
-                            skipVerificationButton.classList.add('hidden');
-                            continueToFormButton.classList.remove('hidden');
+                        faceDetectionMessage.textContent = 'Kamera aktif. Mencari wajah...';
+                        webcamVideo.style.borderColor = NEON_BLUE;
+                        setTimeout(() => {
+                            faceDetectionMessage.textContent = 'Wajah Terdeteksi!';
+                            webcamVideo.style.borderColor = NEON_PURPLE;
                             continueToFormButton.disabled = false;
-                            
-                            // Hentikan streaming setelah 30 detik untuk menghemat sumber daya
-                            setTimeout(() => {
-                                if (webcamVideo.srcObject) {
-                                    webcamVideo.srcObject.getTracks().forEach(track => track.stop());
-                                    webcamVideo.srcObject = null;
-                                    webcamVideo.classList.remove('active-scan');
-                                    faceDetectionMessage.textContent = 'Kamera non-aktif.';
-                                    
-                                    // Sembunyikan tombol Lanjutkan setelah kamera mati
-                                    continueToFormButton.classList.add('hidden');
-                                    startWebcamButton.classList.remove('hidden');
-                                    skipVerificationButton.classList.remove('hidden');
-                                    startWebcamButton.disabled = false;
-                                    skipVerificationButton.disabled = false;
-                                }
-                            }, 30000); // 30 detik
-                        };
-
+                        }, 3000);
                     } catch (err) {
                         console.error('Error accessing camera:', err);
-                        faceDetectionMessage.textContent = 'Gagal mengakses kamera. Silakan coba lagi atau lewati verifikasi.';
+                        faceDetectionMessage.textContent = 'Gagal mengakses kamera.';
                         webcamVideo.style.borderColor = ERROR_COLOR;
                         startWebcamButton.disabled = false;
-                        skipVerificationButton.disabled = false; // Aktifkan lagi tombol lewati
                     }
                 });
-                
                 continueToFormButton.addEventListener('click', () => {
-                    // Hentikan stream kamera saat tombol "Lanjutkan" diklik
-                    if (webcamVideo.srcObject) {
-                        webcamVideo.srcObject.getTracks().forEach(track => track.stop());
-                        webcamVideo.srcObject = null;
-                    }
-                    faceDetectionContainer.classList.add('hidden');
-                    setAriaHidden(faceDetectionContainer, true);
-                    scratchCardContainer.classList.remove('hidden');
-                    setAriaHidden(scratchCardContainer, false);
-                    scratchCardContainer.classList.add('fade-in');
-                });
-                
-                skipVerificationButton.addEventListener('click', () => {
-                    // Fungsi untuk melewati verifikasi kamera
-                    if (webcamVideo.srcObject) {
-                        webcamVideo.srcObject.getTracks().forEach(track => track.stop());
-                        webcamVideo.srcObject = null;
-                    }
+                    if (webcamVideo.srcObject) webcamVideo.srcObject.getTracks().forEach(track => track.stop());
                     faceDetectionContainer.classList.add('hidden');
                     setAriaHidden(faceDetectionContainer, true);
                     scratchCardContainer.classList.remove('hidden');
@@ -1967,8 +1910,6 @@
                 testerSelectChangeNick.appendChild(option);
             });
             
-            setSelectOptionColors(testerSelectChangeNick);
-            
             changeNickBtn.addEventListener('click', () => {
                 testerSelectChangeNick.value = '';
                 changeNickQrSection.classList.add('hidden');
@@ -2058,7 +1999,8 @@
                         });
                 });
             }
-        });
+        }
+        );
     </script>
     
     <script>
