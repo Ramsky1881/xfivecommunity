@@ -271,7 +271,14 @@
             letter-spacing: 2px;
         }
         
-        .btn:hover {
+        .btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+            box-shadow: none;
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn:hover:not(:disabled) {
             transform: translateY(-4px) scale(1.02);
             box-shadow: 
                 0 0 15px var(--neon-blue), 
@@ -291,11 +298,11 @@
             transition: 0.5s;
         }
         
-        .btn:hover::before {
+        .btn:hover:not(:disabled)::before {
             left: 100%;
         }
         
-        .btn:active {
+        .btn:active:not(:disabled) {
             transform: translateY(0) scale(0.98);
             box-shadow: 
                 0 0 5px var(--neon-blue), 
@@ -531,6 +538,7 @@
             display: block;
             border: 4px solid var(--neon-blue);
             transition: border-color .5s ease-in-out;
+            transform: scaleX(-1); /* Mirror the video feed */
         }
         
         #scratchCardWrapper {
@@ -1286,8 +1294,11 @@
         </div>
     </div>
 
+    <!-- External libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // === NEW FEATURES FUNCTIONALITY ===
@@ -1484,11 +1495,11 @@
                                 ❌ Contoh program ilegal yang dimaksud antara lain:
                                 <ul style="list-style: none; margin-left: 20px; padding: 0;">
                                     <span style="color: cyan;">●</span> Taskey edit</li>
-                        <ol>
+                            <ol>
                                     <span style="color: cyan;">●</span> Audition.exe edit</li>
-                        <ol>
+                            <ol>
                                     <span style="color: cyan;">●</span> ACV edit</li>
-                        <ol>
+                            <ol>
                                     <span style="color: cyan;">●</span> File tambahan lain yang mempermudah perfect atau memanipulasi hasil permainan</li>
                                 </ul>
                             </li>
@@ -1532,12 +1543,14 @@
                     <button type="button" id="continueButton" class="btn text-lg mt-8" disabled>Lanjutkan</button>
                 </div>
                 <div id="faceDetectionContainer" class="hidden" aria-hidden="true">
-                    <h2 class="text-3xl font-bold text-center mb-8 glitch-text">PENDETEKSI WAJAH</h2>
-                    <p class="text-center mb-4">Untuk verifikasi, kami perlu akses kamera Anda. Tidak ada data wajah yang disimpan.</p>
+                    <h2 class="text-3xl font-bold text-center mb-8 glitch-text">VERIFIKASI WAJAH</h2>
+                    <p class="text-center mb-4">Untuk keamanan, harap posisikan wajah Anda di depan kamera. Data tidak akan disimpan.</p>
                     <video id="webcamVideo" autoplay muted playsinline></video>
                     <p id="faceDetectionMessage" class="text-center" role="status" aria-live="polite">Menunggu akses kamera...</p>
-                    <button type="button" id="startWebcamButton" class="btn text-lg">Mulai Deteksi</button>
-                    <button type="button" id="continueToFormButton" class="btn text-lg" disabled>Lanjutkan</button>
+                    <div class="mt-4 space-y-3">
+                        <button type="button" id="startWebcamButton" class="btn text-lg">Mulai Deteksi</button>
+                        <button type="button" id="continueToFormButton" class="btn text-lg hidden" disabled>Lanjutkan</button>
+                    </div>
                 </div>
                 <div id="scratchCardContainer" class="hidden" aria-hidden="true">
                     <h2 class="text-3xl font-bold text-center mb-2 glitch-text">VERIFIKASI FINAL!</h2>
@@ -1554,16 +1567,16 @@
                 </div>
                 <div id="memberFormContainer" class="hidden" aria-hidden="true">
                     <h1 class="text-3xl font-bold text-center mb-8 glitch-text">FORMULIR PENDATAAN MEMBER</h1>
-                    <form id="memberForm">
+                    <form id="memberForm" class="space-y-4">
                         <div class="form-group"><label for="namaPanggilan">Nama Panggilan:</label><input type="text" id="namaPanggilan" name="namaPanggilan" required></div>
                         <div class="form-group"><label for="nicknameAyodance">Nickname Ayodance:</label><input type="text" id="nicknameAyodance" name="nicknameAyodance" required></div>
                         <div class="form-group"><label for="tanggalLahir">Tanggal Lahir:</label><input type="date" id="tanggalLahir" name="tanggalLahir" required></div>
                         <div class="form-group"><label for="domisili">Domisili:</label><input type="text" id="domisili" name="domisili" required></div>
                         <div class="form-group">
                             <label>Punya Sosial Media?</label>
-                            <div class="radio-group">
-                                <label><input type="radio" name="hasSocialMedia" value="Ya"> Ya</label>
-                                <label><input type="radio" name="hasSocialMedia" value="Tidak" checked> Tidak</label>
+                            <div class="radio-group flex gap-x-4">
+                                <label class="flex items-center"><input type="radio" name="hasSocialMedia" value="Ya" class="mr-2"> Ya</label>
+                                <label class="flex items-center"><input type="radio" name="hasSocialMedia" value="Tidak" checked class="mr-2"> Tidak</label>
                             </div>
                             <div id="socialMediaInputContainer" class="mt-3 hidden">
                                 <label for="sosialMediaName">Nama Sosial Media:</label>
@@ -1644,9 +1657,10 @@
                 const socialMediaInputContainer = document.getElementById('socialMediaInputContainer');
                 const testerSelect = document.getElementById('tester');
                 const divisiCommunitySelect = document.getElementById('divisiCommunity');
-                const downloadPassportButton = document.getElementById('downloadPassportButton');
-                const passportContainer = document.getElementById('passportContainer');
-
+                
+                // --- Face Detection Variables ---
+                let detectionInterval = null;
+                let mediaStream = null;
 
                 const notificationModal = {
                     overlay: notificationModalOverlay,
@@ -1668,27 +1682,34 @@
                     if (selectElement) {
                         selectElement.style.color = 'white';
                         selectElement.style.backgroundColor = '#1a1a1a';
-                        selectElement.addEventListener('focus', () => {
-                            Array.from(selectElement.options).forEach(option => {
-                                option.style.color = 'white';
-                                option.style.backgroundColor = '#1a1a1a';
-                            });
-                        });
-                        selectElement.addEventListener('blur', () => {
-                            Array.from(selectElement.options).forEach(option => {
-                                option.style.color = 'white';
-                                option.style.backgroundColor = '#1a1a1a';
-                            });
-                        });
                     }
                 }
                 setSelectOptionColors(testerSelect);
                 setSelectOptionColors(divisiCommunitySelect);
 
-                backToMenuBtn.addEventListener('click', showMainMenu);
+                function stopWebcamAndDetection() {
+                    if (detectionInterval) {
+                        clearInterval(detectionInterval);
+                        detectionInterval = null;
+                    }
+                    if (mediaStream) {
+                        mediaStream.getTracks().forEach(track => track.stop());
+                        mediaStream = null;
+                    }
+                    if (webcamVideo) {
+                        webcamVideo.srcObject = null;
+                    }
+                }
+
+                backToMenuBtn.addEventListener('click', () => {
+                    stopWebcamAndDetection();
+                    showMainMenu();
+                });
+
                 agreeToRulesCheckbox.addEventListener('change', () => {
                     continueButton.disabled = !agreeToRulesCheckbox.checked;
                 });
+                
                 continueButton.addEventListener('click', () => {
                     rulesContainer.classList.add('hidden');
                     setAriaHidden(rulesContainer, true);
@@ -1696,34 +1717,62 @@
                     setAriaHidden(faceDetectionContainer, false);
                     faceDetectionContainer.classList.add('fade-in');
                 });
+
                 startWebcamButton.addEventListener('click', async () => {
                     startWebcamButton.disabled = true;
-                    faceDetectionMessage.textContent = 'Memulai kamera...';
+                    faceDetectionMessage.textContent = 'Memuat model AI...';
+                    
                     try {
-                        const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                        // Load face-api models
+                        const modelPath = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/model';
+                        await faceapi.nets.tinyFaceDetector.loadFromUri(modelPath);
+
+                        faceDetectionMessage.textContent = 'Meminta akses kamera...';
+                        mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
                         webcamVideo.srcObject = mediaStream;
-                        await webcamVideo.play();
-                        faceDetectionMessage.textContent = 'Kamera aktif. Mencari wajah...';
-                        webcamVideo.style.borderColor = NEON_BLUE;
-                        setTimeout(() => {
-                            faceDetectionMessage.textContent = 'Wajah Terdeteksi!';
-                            webcamVideo.style.borderColor = NEON_PURPLE;
-                            continueToFormButton.disabled = false;
-                        }, 3000);
+                        
+                        webcamVideo.onplaying = () => {
+                             faceDetectionMessage.textContent = 'Kamera aktif. Posisikan wajah Anda...';
+                             webcamVideo.style.borderColor = NEON_BLUE;
+                            
+                             detectionInterval = setInterval(async () => {
+                                if (!webcamVideo.srcObject) return; // Stop if stream is gone
+                                const detection = await faceapi.detectSingleFace(webcamVideo, new faceapi.TinyFaceDetectorOptions());
+                                
+                                if (detection) {
+                                    faceDetectionMessage.textContent = 'Wajah Terdeteksi!';
+                                    webcamVideo.style.borderColor = NEON_PURPLE;
+                                    continueToFormButton.disabled = false;
+                                    startWebcamButton.classList.add('hidden');
+                                    continueToFormButton.classList.remove('hidden');
+                                    clearInterval(detectionInterval);
+                                } else {
+                                    faceDetectionMessage.textContent = 'Wajah tidak terdeteksi...';
+                                    webcamVideo.style.borderColor = ERROR_COLOR;
+                                }
+                            }, 500); // Check every 500ms
+                        };
+
                     } catch (err) {
-                        console.error('Error accessing camera:', err);
-                        faceDetectionMessage.textContent = 'Gagal mengakses kamera.';
+                        console.error('Error accessing camera or models:', err);
+                        faceDetectionMessage.textContent = 'Gagal: Izin kamera ditolak atau model gagal dimuat.';
                         webcamVideo.style.borderColor = ERROR_COLOR;
                         startWebcamButton.disabled = false;
                     }
                 });
+                
                 continueToFormButton.addEventListener('click', () => {
-                    if (webcamVideo.srcObject) webcamVideo.srcObject.getTracks().forEach(track => track.stop());
+                    stopWebcamAndDetection();
                     faceDetectionContainer.classList.add('hidden');
                     setAriaHidden(faceDetectionContainer, true);
                     scratchCardContainer.classList.remove('hidden');
                     setAriaHidden(scratchCardContainer, false);
                     scratchCardContainer.classList.add('fade-in');
+                    // Ensure canvas is set up correctly after being displayed
+                    setTimeout(() => {
+                        const setupCanvasEvent = new Event('setupcanvas');
+                        scratchCanvas.dispatchEvent(setupCanvasEvent);
+                    }, 10);
                 });
                 
                 if (scratchCanvas) {
@@ -1756,21 +1805,15 @@
                         ctx.arc(pos.x, pos.y, 30, 0, Math.PI * 2, false);
                         ctx.fill();
                     };
-                    const reveal = () => {
-                        scratchCanvas.style.pointerEvents = 'none';
-                        scratchCanvas.style.transition = 'opacity 0.5s';
-                        scratchCanvas.style.opacity = '0';
-                    };
                     const start = (e) => {
                         isScratching = true;
                         scratch(e);
                     };
                     const end = () => {
-                        if (!isScratching) return;
                         isScratching = false;
-                        reveal();
                     };
                     window.addEventListener('resize', setupCanvas);
+                    scratchCanvas.addEventListener('setupcanvas', setupCanvas);
                     scratchCanvas.addEventListener('mousedown', start);
                     scratchCanvas.addEventListener('mouseup', end);
                     scratchCanvas.addEventListener('mouseleave', end);
@@ -1846,12 +1889,6 @@
                         showNotification('Pendaftaran Sukses', 'Data Anda berhasil dikirim!');
                     } catch (error) {
                         console.error('Error submitting form:', error);
-                        notificationModal.title.textContent = 'Terjadi Kesalahan';
-                        notificationModal.message.innerHTML = 'Maaf, data Anda gagal dikirim. Silakan coba lagi nanti.';
-                        notificationModal.overlay.classList.add('show');
-                        setAriaHidden(notificationModal.overlay, false);
-                        
-                        // Show error notification
                         showNotification('Kesalahan Sistem', 'Gagal mengirim data. Silakan coba lagi.');
                     } finally {
                         submitButton.disabled = false;
@@ -1957,50 +1994,7 @@
                 }
             });
 
-            document.querySelectorAll('.btn').forEach(button => {
-                button.addEventListener('click', function(e) {
-                    if (this.disabled) return;
-                    const x = e.clientX - this.getBoundingClientRect().left;
-                    const y = e.clientY - this.getBoundingClientRect().top;
-                    const ripple = document.createElement('span');
-                    ripple.style.left = x + 'px';
-                    ripple.style.top = y + 'px';
-                    ripple.classList.add('ripple');
-                    this.appendChild(ripple);
-                    ripple.addEventListener('animationend', function() {
-                        this.remove();
-                    });
-                });
-            });
-            
-            // === PWA Installation Support ===
-            let deferredPrompt;
-            
-            // Listen for beforeinstallprompt event
-            window.addEventListener('beforeinstallprompt', (e) => {
-                // Prevent Chrome 67 and earlier from automatically showing the prompt
-                e.preventDefault();
-                // Stash the event so it can be triggered later
-                deferredPrompt = e;
-                
-                // Show custom install prompt
-                showNotification('Install Aplikasi', 'XFIVE Community Hub dapat diinstall ke perangkat Anda!');
-            });
-            
-            // Service Worker Registration
-            if ('serviceWorker' in navigator) {
-                window.addEventListener('load', () => {
-                    navigator.serviceWorker.register('/service-worker.js')
-                        .then(registration => {
-                            console.log('ServiceWorker registered: ', registration);
-                        })
-                        .catch(error => {
-                            console.log('ServiceWorker registration failed: ', error);
-                        });
-                });
-            }
-        }
-        );
+        });
     </script>
     
     <script>
@@ -2011,10 +2005,6 @@
                 const CACHE_NAME = 'xfive-cache-v1';
                 const urlsToCache = [
                     '/',
-                    '/index.html',
-                    '/styles.css',
-                    '/app.js',
-                    '/cyberpunk-synthwave.mp3'
                 ];
                 
                 self.addEventListener('install', event => {
