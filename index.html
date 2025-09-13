@@ -74,7 +74,7 @@
         @keyframes marquee {
             0% { transform: translateX(100%); }
             100% { transform
-              : translateX(-100%); }
+            : translateX(-100%); }
         }
         
         /* Cyberpunk Scanlines */
@@ -530,9 +530,15 @@
             margin: 20px auto;
             display: block;
             border: 4px solid var(--neon-blue);
-            transition: border-color .5s ease-in-out;
+            transition: border-color .5s ease-in-out, box-shadow .5s ease-in-out;
         }
         
+        /* Tambahkan class ini untuk efek border pulsing */
+        #webcamVideo.active-scan {
+            animation: pulseBorder 2s infinite ease-in-out;
+            border-color: var(--neon-green);
+        }
+
         #scratchCardWrapper {
             box-shadow: 0 10px 30px rgba(0, 255, 255, 0.15);
             border-radius: 12px;
@@ -1289,6 +1295,26 @@
     <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script>
+        
+        function setSelectOptionColors(selectElement) {
+            if (selectElement) {
+                selectElement.style.color = 'white';
+                selectElement.style.backgroundColor = '#1a1a1a';
+                selectElement.addEventListener('focus', () => {
+                    Array.from(selectElement.options).forEach(option => {
+                        option.style.color = 'white';
+                        option.style.backgroundColor = '#1a1a1a';
+                    });
+                });
+                selectElement.addEventListener('blur', () => {
+                    Array.from(selectElement.options).forEach(option => {
+                        option.style.color = 'white';
+                        option.style.backgroundColor = '#1a1a1a';
+                    });
+                });
+            }
+        }
+        
         document.addEventListener('DOMContentLoaded', function() {
             // === NEW FEATURES FUNCTIONALITY ===
             
@@ -1532,11 +1558,11 @@
                     <button type="button" id="continueButton" class="btn text-lg mt-8" disabled>Lanjutkan</button>
                 </div>
                 <div id="faceDetectionContainer" class="hidden" aria-hidden="true">
-                    <h2 class="text-3xl font-bold text-center mb-8 glitch-text">PENDETEKSI WAJAH</h2>
-                    <p class="text-center mb-4">Untuk verifikasi, kami perlu akses kamera Anda. Tidak ada data wajah yang disimpan.</p>
+                    <h2 class="text-3xl font-bold text-center mb-8 glitch-text">PENYIAPAN VERIFIKASI</h2>
+                    <p class="text-center mb-4">Untuk melanjutkan, Anda perlu mengaktifkan kamera. Pastikan wajah Anda terlihat jelas di layar.</p>
                     <video id="webcamVideo" autoplay muted playsinline></video>
                     <p id="faceDetectionMessage" class="text-center" role="status" aria-live="polite">Menunggu akses kamera...</p>
-                    <button type="button" id="startWebcamButton" class="btn text-lg">Mulai Deteksi</button>
+                    <button type="button" id="startWebcamButton" class="btn text-lg">Mulai Verifikasi Kamera</button>
                     <button type="button" id="continueToFormButton" class="btn text-lg" disabled>Lanjutkan</button>
                 </div>
                 <div id="scratchCardContainer" class="hidden" aria-hidden="true">
@@ -1664,24 +1690,7 @@
                     testerSelect.appendChild(option);
                 });
 
-                function setSelectOptionColors(selectElement) {
-                    if (selectElement) {
-                        selectElement.style.color = 'white';
-                        selectElement.style.backgroundColor = '#1a1a1a';
-                        selectElement.addEventListener('focus', () => {
-                            Array.from(selectElement.options).forEach(option => {
-                                option.style.color = 'white';
-                                option.style.backgroundColor = '#1a1a1a';
-                            });
-                        });
-                        selectElement.addEventListener('blur', () => {
-                            Array.from(selectElement.options).forEach(option => {
-                                option.style.color = 'white';
-                                option.style.backgroundColor = '#1a1a1a';
-                            });
-                        });
-                    }
-                }
+                
                 setSelectOptionColors(testerSelect);
                 setSelectOptionColors(divisiCommunitySelect);
 
@@ -1696,6 +1705,8 @@
                     setAriaHidden(faceDetectionContainer, false);
                     faceDetectionContainer.classList.add('fade-in');
                 });
+                
+                // === LOGIC BARU UNTUK VERIFIKASI WAJAH ===
                 startWebcamButton.addEventListener('click', async () => {
                     startWebcamButton.disabled = true;
                     faceDetectionMessage.textContent = 'Memulai kamera...';
@@ -1703,22 +1714,38 @@
                         const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
                         webcamVideo.srcObject = mediaStream;
                         await webcamVideo.play();
-                        faceDetectionMessage.textContent = 'Kamera aktif. Mencari wajah...';
-                        webcamVideo.style.borderColor = NEON_BLUE;
-                        setTimeout(() => {
-                            faceDetectionMessage.textContent = 'Wajah Terdeteksi!';
-                            webcamVideo.style.borderColor = NEON_PURPLE;
+
+                        // Cek apakah video sudah bisa diputar sebelum lanjut
+                        webcamVideo.onloadeddata = () => {
+                            faceDetectionMessage.textContent = 'Kamera aktif. Silakan posisikan wajah Anda.';
+                            webcamVideo.classList.add('active-scan');
                             continueToFormButton.disabled = false;
-                        }, 3000);
+                            
+                            // Hentikan streaming setelah 30 detik untuk menghemat sumber daya, kecuali pengguna sudah pindah
+                            setTimeout(() => {
+                                if (webcamVideo.srcObject) {
+                                    webcamVideo.srcObject.getTracks().forEach(track => track.stop());
+                                    webcamVideo.srcObject = null;
+                                    webcamVideo.classList.remove('active-scan');
+                                    faceDetectionMessage.textContent = 'Kamera non-aktif.';
+                                }
+                            }, 30000); // 30 detik
+                        };
+
                     } catch (err) {
                         console.error('Error accessing camera:', err);
-                        faceDetectionMessage.textContent = 'Gagal mengakses kamera.';
+                        faceDetectionMessage.textContent = 'Gagal mengakses kamera. Pastikan Anda mengizinkan akses.';
                         webcamVideo.style.borderColor = ERROR_COLOR;
                         startWebcamButton.disabled = false;
                     }
                 });
+                
                 continueToFormButton.addEventListener('click', () => {
-                    if (webcamVideo.srcObject) webcamVideo.srcObject.getTracks().forEach(track => track.stop());
+                    // Hentikan stream kamera saat tombol "Lanjutkan" diklik
+                    if (webcamVideo.srcObject) {
+                        webcamVideo.srcObject.getTracks().forEach(track => track.stop());
+                        webcamVideo.srcObject = null;
+                    }
                     faceDetectionContainer.classList.add('hidden');
                     setAriaHidden(faceDetectionContainer, true);
                     scratchCardContainer.classList.remove('hidden');
@@ -1910,6 +1937,8 @@
                 testerSelectChangeNick.appendChild(option);
             });
             
+            setSelectOptionColors(testerSelectChangeNick);
+            
             changeNickBtn.addEventListener('click', () => {
                 testerSelectChangeNick.value = '';
                 changeNickQrSection.classList.add('hidden');
@@ -1999,8 +2028,7 @@
                         });
                 });
             }
-        }
-        );
+        });
     </script>
     
     <script>
