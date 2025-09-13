@@ -8,18 +8,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     
-    <!-- Load MediaPipe libraries - UPDATED TO SPECIFIC STABLE VERSIONS -->
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3.1640029074/camera_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils@0.6.1629159505/control_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils@0.3.1620248257/drawing_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4.1633559611/face_mesh.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915/hands.js" crossorigin="anonymous"></script>
-    
-    <!-- Tetap mempertahankan manifest dan styling yang sudah ada -->
     <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiWEZJdmUgQ29tbXVuaXR5IEh1YiIsInNob3J0X25hbWUiOiJYRklWRSIsInN0YXJ0X3VybCI6Ii8iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjMDAwMDAwIiwidGhlbWVfY29sb3IiOiIjMDBGRkZGIiwiaWNvbnMiOlt7InNyYyI6Imh0dHBzOi8vcmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbS9tb2Rlcm5maXJtd2ViL2ljb25zL21hc3Rlci9pY29uLTE5MngxOTIucG5nIiwic2l6ZXMiOiIxOTJ4MTkyIiwidHlwZSI6ImltYWdlL3BuZyJ9LHsic3JjIjoiaHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL21vZGVybmZpcm13ZWIvaWNvbnMvbWFzdGVyL2ljb24tNTEyeDUxMi5wbmciLCJzaXplcyI6IjUxMng1MTIiLCJ0eXBlIjoiaW1hZ2UvcG5nIn1dfQ==">
     
     <style>
-        /* CSS Variables for cyberpunk theme - Tetap sama */
+        /* CSS Variables for cyberpunk theme */
         :root {
             --neon-blue: #00FFFF;
             --neon-purple: #8A2BE2;
@@ -81,7 +73,8 @@
         /* Broadcast Text Animation */
         @keyframes marquee {
             0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
+            100% { transform
+              : translateX(-100%); }
         }
         
         /* Cyberpunk Scanlines */
@@ -527,7 +520,7 @@
             flex-shrink: 0;
         }
 
-        .agreement-checkbox-group span {
+        .agreement-checkbox-group label {
             font-weight: 500;
             color: var(--text-color);
             text-align: left;
@@ -640,7 +633,6 @@
         .rules-section ol {
             list-style: none;
             counter-reset: rule-counter;
-            padding-left: 0;
         }
 
         .rules-section ol li {
@@ -889,7 +881,7 @@
                 font-size: 0.9rem;
             }
             
-            .agreement-checkbox-group span {
+            .agreement-checkbox-group label {
                 font-size: 0.9rem;
             }
             
@@ -1090,103 +1082,6 @@
             70% { box-shadow: 0 0 0 10px rgba(0, 255, 255, 0); }
             100% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0); }
         }
-        
-        /* Liveness Check Specific Styles */
-        .liveness-instructions {
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--neon-blue);
-            border-radius: 10px;
-            padding: 15px;
-            margin: 15px 0;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .liveness-instructions::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: var(--neon-blue);
-            animation: progressBar 10s linear;
-        }
-        
-        .liveness-step {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin: 10px 0;
-            padding: 10px;
-            border-radius: 8px;
-            background: rgba(0, 0, 0, 0.3);
-        }
-        
-        .liveness-step.completed {
-            border: 1px solid var(--neon-green);
-        }
-        
-        .liveness-step.active {
-            border: 1px solid var(--neon-blue);
-            animation: pulseBorder 2s infinite;
-        }
-        
-        .liveness-icon {
-            font-size: 24px;
-            margin-right: 10px;
-        }
-        
-        .liveness-status {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #444;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .liveness-status.completed {
-            background: var(--neon-green);
-            box-shadow: 0 0 10px var(--neon-green);
-        }
-        
-        .liveness-status.active {
-            background: var(--neon-blue);
-            box-shadow: 0 0 10px var(--neon-blue);
-            animation: pulseBorder 2s infinite;
-        }
-
-        /* PERBAIKAN: Mengubah warna teks di dalam langkah verifikasi */
-        .liveness-step span:not(.liveness-icon) {
-            color: var(--text-color);
-        }
-        
-        .progress-container {
-            width: 100%;
-            height: 10px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 5px;
-            margin: 15px 0;
-            overflow: hidden;
-        }
-        
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
-            width: 0%;
-            transition: width 0.5s ease;
-            border-radius: 5px;
-        }
-        
-        .detection-feedback {
-            font-size: 0.9rem;
-            margin-top: 10px;
-            min-height: 20px;
-            color: var(--neon-blue);
-        }
     </style>
 </head>
 <body>
@@ -1271,7 +1166,7 @@
                         Instagram
                     </a>
                     <a href="https://whatsapp.com/channel/0029VacIZBaFXUucwTdpvl1S" target="_blank" class="btn col-span-2 md:col-span-1">
-                        <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M21 12.5c0 .6-.4 1.1-.9 1.2l-4.2-.8c-.4.1-.7.5-.7.9V18c0 .6-.4 1.1-.9 1.2l-4.2-.8c-.4.1-.7.5-.7.9V22c0 .6.4 1.1.9 1.2L2 23.5c-.6.1-1-.4-1-1V2.5c0-.6.4-1.1.9-1.2l4.2-.8c.4-.1.7-.5.7-.9V0c0-.6.4-1.1.9-1.2l4.2-.8c.4-.1.7-.5.7-.9V-4c0-.6.4-1.1.9-1.2l4.2-.8c.6-.1 1 .4 1 1V12.5z"/></svg>
+                        <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M21 12.5c0 .6-.4 1.1-.9 1.2l-4.2.8c-.4.1-.7.5-.7.9V18c0 .6-.4 1.1-.9 1.2l-4.2.8c-.4.1-.7.5-.7.9V22c0 .6.4 1.1.9 1.2L2 23.5c-.6.1-1-.4-1-1V2.5c0-.6.4-1.1.9-1.2l4.2-.8c.4-.1.7-.5.7-.9V0c0-.6.4-1.1.9-1.2l4.2-.8c.4-.1.7-.5.7-.9V-4c0-.6.4-1.1.9-1.2l4.2-.8c.6-.1 1 .4 1 1V12.5z"/></svg>
                         Channel Whatsapp
                     </a>
                 </div>
@@ -1400,6 +1295,7 @@
     </div>
 
     <!-- External libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     
@@ -1532,20 +1428,6 @@
             const NEON_BLUE = '#00FFFF';
             const NEON_PURPLE = '#8A2BE2';
             const ERROR_COLOR = '#FF69B4';
-            const NEON_GREEN = '#00FF00';
-
-            // --- MediaPipe Variables ---
-            let faceMesh = null;
-            let hands = null;
-            let faceMeshResults = null;
-            let handsResults = null;
-            let camera = null;
-
-            // --- Liveness Check Variables ---
-            let livenessState = 'detecting_face';
-            let smileBaseline = null;
-            let detectionInterval = null;
-            let mediaStream = null;
 
             // --- HTML Templates for Dynamic Content ---
             const formStepsHTML = `
@@ -1562,7 +1444,7 @@
                             <li>Komunitas XFIVE dibentuk sebagai wadah kebersamaan, bermain, dan bersosialisasi antar pemain AyoDance.</li>
                             <li>Tujuan utama adalah menciptakan lingkungan bermain yang nyaman, aman, dan solid.</li>
                             <li>Komunitas XFIVE juga berperan sebagai wadah gathering (gath) berskala nasional se-Indonesia, yang mempererat persaudaraan antar anggota melalui kegiatan online maupun offline.</li>
-                            <li>Semua anggota wajib membaca and mematuhi aturan sebelum melakukan aktivitas di komunitas.</li>
+                            <li>Semua anggota wajib membaca dan mematuhi aturan sebelum melakukan aktivitas di komunitas.</li>
                         </ol>
                         
                         <h4>Pasal 2 – Keanggotaan</h4>
@@ -1611,12 +1493,15 @@
                         <h4>Pasal 7 – Game Play & Club Battle</h4>
                         <ol>
                             <li>Kepada seluruh anggota dan staff komunitas XFIVE, dengan ini ditegaskan bahwa DILARANG KERAS menggunakan program ilegal/cheat dalam bentuk apa pun saat club battle maupun aktivitas yang merugikan permainan lainnya.
-                                <br>❌ Contoh program ilegal yang dimaksud antara lain:
+                                ❌ Contoh program ilegal yang dimaksud antara lain:
                                 <ul style="list-style: none; margin-left: 20px; padding: 0;">
-                                    <li><span style="color: cyan;">●</span> Taskey edit</li>
-                                    <li><span style="color: cyan;">●</span> Audition.exe edit</li>
-                                    <li><span style="color: cyan;">●</span> ACV edit</li>
-                                    <li><span style="color: cyan;">●</span> File tambahan lain yang mempermudah perfect atau memanipulasi hasil permainan</li>
+                                    <span style="color: cyan;">●</span> Taskey edit</li>
+                            <ol>
+                                    <span style="color: cyan;">●</span> Audition.exe edit</li>
+                            <ol>
+                                    <span style="color: cyan;">●</span> ACV edit</li>
+                            <ol>
+                                    <span style="color: cyan;">●</span> File tambahan lain yang mempermudah perfect atau memanipulasi hasil permainan</li>
                                 </ul>
                             </li>
                             <li>Penggunaan program ilegal tidak hanya merugikan lawan, tetapi juga merusak sportivitas serta nama baik komunitas XFIVE.</li>
@@ -1661,54 +1546,56 @@
                 <div id="faceDetectionContainer" class="hidden" aria-hidden="true">
                     <h2 class="text-3xl font-bold text-center mb-8 glitch-text">VERIFIKASI WAJAH</h2>
                     <p class="text-center mb-4">Untuk keamanan, harap posisikan wajah Anda di depan kamera. Data tidak akan disimpan.</p>
-                    
-                    <div class="liveness-instructions">
-                        <h3 id="livenessInstruction">Silakan posisikan wajah Anda di depan kamera</h3>
-                        <div class="progress-container">
-                            <div id="livenessProgress" class="progress-bar"></div>
-                        </div>
-                        <div class="detection-feedback" id="detectionFeedback"></div>
-                    </div>
-                    
-                    <div class="liveness-steps">
-                        <div class="liveness-step" id="stepFace">
-                            <div class="flex items-center">
-                                <span class="liveness-icon">👤</span>
-                                <span>Wajah terdeteksi</span>
-                            </div>
-                            <div class="liveness-status" id="statusFace"></div>
-                        </div>
-                        <div class="liveness-step" id="stepSmile">
-                            <div class="flex items-center">
-                                <span class="liveness-icon">😊</span>
-                                <span>Tersenyum ke kamera</span>
-                            </div>
-                            <div class="liveness-status" id="statusSmile"></div>
-                        </div>
-                        <div class="liveness-step" id="stepHand">
-                            <div class="flex items-center">
-                                <span class="liveness-icon">✋</span>
-                                <span>Angkat tangan kanan</span>
-                            </div>
-                            <div class="liveness-status" id="statusHand"></div>
-                        </div>
-                    </div>
-                    
                     <video id="webcamVideo" autoplay muted playsinline></video>
                     <p id="faceDetectionMessage" class="text-center" role="status" aria-live="polite">Menunggu akses kamera...</p>
                     <div class="mt-4 space-y-3">
-                        <button type="button" id="startWebcamButton" class="btn text-lg">Mulai Verifikasi</button>
+                        <button type="button" id="startWebcamButton" class="btn text-lg">Mulai Deteksi</button>
                         <button type="button" id="continueToFormButton" class="btn text-lg hidden" disabled>Lanjutkan</button>
                     </div>
                 </div>
                 <div id="scratchCardContainer" class="hidden" aria-hidden="true">
-                    <!-- Konten scratch card yang sama -->
+                    <h2 class="text-3xl font-bold text-center mb-2 glitch-text">VERIFIKASI FINAL!</h2>
+                    <p class="mb-6 text-center">Password Singkatan dari XcecutiveFiveID</p>
+                    <div id="scratchCardWrapper">
+                        <canvas id="scratchCanvas"></canvas>
+                        <div id="hiddenContent">
+                            <label for="secretPassword" class="font-semibold mb-2">Kata Sandi:</label>
+                            <input type="text" id="secretPassword" placeholder="...">
+                            <button type="button" id="verifyPasswordButton" class="btn">Verifikasi</button>
+                            <p id="passwordError" class="text-red-500 text-sm mt-1 hidden" role="status" aria-live="polite">Salah!</p>
+                        </div>
+                    </div>
                 </div>
                 <div id="memberFormContainer" class="hidden" aria-hidden="true">
-                    <!-- Konten form yang sama -->
+                    <h1 class="text-3xl font-bold text-center mb-8 glitch-text">FORMULIR PENDATAAN MEMBER</h1>
+                    <form id="memberForm" class="space-y-4">
+                        <div class="form-group"><label for="namaPanggilan">Nama Panggilan:</label><input type="text" id="namaPanggilan" name="namaPanggilan" required></div>
+                        <div class="form-group"><label for="nicknameAyodance">Nickname Ayodance:</label><input type="text" id="nicknameAyodance" name="nicknameAyodance" required></div>
+                        <div class="form-group"><label for="tanggalLahir">Tanggal Lahir:</label><input type="date" id="tanggalLahir" name="tanggalLahir" required></div>
+                        <div class="form-group"><label for="domisili">Domisili:</label><input type="text" id="domisili" name="domisili" required></div>
+                        <div class="form-group">
+                            <label>Punya Sosial Media?</label>
+                            <div class="radio-group flex gap-x-4">
+                                <label class="flex items-center"><input type="radio" name="hasSocialMedia" value="Ya" class="mr-2"> Ya</label>
+                                <label class="flex items-center"><input type="radio" name="hasSocialMedia" value="Tidak" checked class="mr-2"> Tidak</label>
+                            </div>
+                            <div id="socialMediaInputContainer" class="mt-3 hidden">
+                                <label for="sosialMediaName">Nama Sosial Media:</label>
+                                <input type="text" id="sosialMediaName" name="sosialMediaName">
+                            </div>
+                        </div>
+                        <div class="form-group"><label for="divisiCommunity">Divisi:</label><select id="divisiCommunity" name="divisiCommunity" required><option value="">Pilih</option><option value="Club">Club</option><option value="Com">Com</option></select></div>
+                        <div class="form-group"><label for="tester">Pilih Tester:</label><select id="tester" name="tester" required><option value="">Pilih</option></select></div>
+                        <div class="mt-8">
+                            <button type="submit" id="submitButton" class="btn">
+                                <span id="buttonText">Kirim Data</span>
+                                <span id="loadingSpinner" class="loading-spinner hidden"></span>
+                            </button>
+                        </div>
+                    </form>
                 </div>
             `;
-
+            
             // --- Functions ---
             function setAriaHidden(element, hidden) {
                 if (element) {
@@ -1721,9 +1608,6 @@
                 setAriaHidden(formWrapper, true);
                 mainMenu.classList.remove('hidden');
                 setAriaHidden(mainMenu, false);
-                
-                // Stop any ongoing detection
-                stopWebcamAndDetection();
             }
 
             function showForm() {
@@ -1748,293 +1632,298 @@
                 return initials;
             }
 
-            // --- MediaPipe Functions ---
-            function loadFaceMeshModel() {
-                return new Promise((resolve, reject) => {
-                    faceMesh = new FaceMesh({
-                        locateFile: (file) => {
-                            return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4.1633559611/${file}`;
-                        }
-                    });
-                    
-                    faceMesh.setOptions({
-                        maxNumFaces: 1,
-                        refineLandmarks: true,
-                        minDetectionConfidence: 0.5,
-                        minTrackingConfidence: 0.5
-                    });
-                    
-                    faceMesh.onResults((results) => {
-                        faceMeshResults = results;
-                    });
-                    
-                    faceMesh.initialize().then(() => {
-                        console.log("FaceMesh model loaded");
-                        resolve();
-                    }).catch(error => {
-                        console.error("Error loading FaceMesh model:", error);
-                        reject(error);
-                    });
-                });
-            }
-
-            function loadHandsModel() {
-                return new Promise((resolve, reject) => {
-                    hands = new Hands({
-                        locateFile: (file) => {
-                            return `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915/${file}`;
-                        }
-                    });
-                    
-                    hands.setOptions({
-                        maxNumHands: 2,
-                        modelComplexity: 1,
-                        minDetectionConfidence: 0.5,
-                        minTrackingConfidence: 0.5
-                    });
-                    
-                    hands.onResults((results) => {
-                        handsResults = results;
-                    });
-                    
-                    hands.initialize().then(() => {
-                        console.log("Hands model loaded");
-                        resolve();
-                    }).catch(error => {
-                        console.error("Error loading Hands model:", error);
-                        reject(error);
-                    });
-                });
-            }
-
-            function getLipsWidth(landmarks) {
-                // Landmark untuk sudut bibir: 61 (kiri) dan 291 (kanan)
-                const leftCorner = landmarks[61];
-                const rightCorner = landmarks[291];
-                return Math.abs(rightCorner.x - leftCorner.x);
-            }
-
-            function startLivenessCheck() {
-                const webcamVideo = document.getElementById('webcamVideo');
-                const detectionFeedback = document.getElementById('detectionFeedback');
-                const livenessProgress = document.getElementById('livenessProgress');
-                const livenessInstruction = document.getElementById('livenessInstruction');
-                const statusFace = document.getElementById('statusFace');
-                const statusSmile = document.getElementById('statusSmile');
-                const statusHand = document.getElementById('statusHand');
-                const stepFace = document.getElementById('stepFace');
-                const stepSmile = document.getElementById('stepSmile');
-                const stepHand = document.getElementById('stepHand');
-                const continueToFormButton = document.getElementById('continueToFormButton');
-                
-                let progress = 0;
-                let smileDetected = false;
-                let handDetected = false;
-                
-                // Reset UI state
-                livenessState = 'detecting_face';
-                statusFace.className = 'liveness-status';
-                statusSmile.className = 'liveness-status';
-                statusHand.className = 'liveness-status';
-                stepFace.className = 'liveness-step';
-                stepSmile.className = 'liveness-step';
-                stepHand.className = 'liveness-step';
-                livenessProgress.style.width = '0%';
-                
-                detectionInterval = setInterval(async () => {
-                    if (webcamVideo.readyState < 2) {
-                        return;
-                    }
-
-                    try {
-                        // Process face detection
-                        if (faceMesh) await faceMesh.send({image: webcamVideo});
-                        
-                        // Process hand detection
-                        if (hands) await hands.send({image: webcamVideo});
-                        
-                        // Process results based on current state
-                        if (livenessState === 'detecting_face') {
-                            if (faceMeshResults && faceMeshResults.multiFaceLandmarks && faceMeshResults.multiFaceLandmarks.length > 0) {
-                                // Face detected
-                                statusFace.className = 'liveness-status completed';
-                                stepFace.className = 'liveness-step completed';
-                                livenessState = 'smile';
-                                livenessInstruction.textContent = 'Silakan tersenyum ke kamera 😊';
-                                progress = 33;
-                                livenessProgress.style.width = `${progress}%`;
-                                
-                                // Get baseline lip width
-                                const landmarks = faceMeshResults.multiFaceLandmarks[0];
-                                smileBaseline = getLipsWidth(landmarks);
-                            } else {
-                                detectionFeedback.textContent = 'Tidak ada wajah yang terdeteksi...';
-                            }
-                        } else if (livenessState === 'smile') {
-                            if (faceMeshResults && faceMeshResults.multiFaceLandmarks && faceMeshResults.multiFaceLandmarks.length > 0) {
-                                const landmarks = faceMeshResults.multiFaceLandmarks[0];
-                                const lipsWidth = getLipsWidth(landmarks);
-                                
-                                // Check if user is smiling (lips wider than baseline)
-                                if (lipsWidth > smileBaseline * 1.3) {
-                                    smileDetected = true;
-                                    statusSmile.className = 'liveness-status completed';
-                                    stepSmile.className = 'liveness-step completed';
-                                    livenessState = 'hand';
-                                    livenessInstruction.textContent = 'Sekarang angkat tangan kanan Anda ✋';
-                                    progress = 66;
-                                    livenessProgress.style.width = `${progress}%`;
-                                    detectionFeedback.textContent = 'Senyum terdeteksi!';
-                                } else {
-                                    detectionFeedback.textContent = 'Silakan tersenyum lebih lebar...';
-                                }
-                            }
-                        } else if (livenessState === 'hand') {
-                            if (handsResults && handsResults.multiHandLandmarks && handsResults.multiHandLandmarks.length > 0) {
-                                // Check each detected hand
-                                for (let i = 0; i < handsResults.multiHandLandmarks.length; i++) {
-                                    const handedness = handsResults.multiHandedness[i].label;
-                                    const landmarks = handsResults.multiHandLandmarks[i];
-                                    
-                                    // Look for right hand
-                                    if (handedness === 'Right') {
-                                        // Get wrist position (landmark 0)
-                                        const wrist = landmarks[0];
-                                        
-                                        // Check if hand is raised (wrist y position is above a threshold)
-                                        if (wrist.y < 0.6) { // Adjust threshold as needed
-                                            handDetected = true;
-                                            statusHand.className = 'liveness-status completed';
-                                            stepHand.className = 'liveness-step completed';
-                                            progress = 100;
-                                            livenessProgress.style.width = `${progress}%`;
-                                            detectionFeedback.textContent = 'Tangan terdeteksi!';
-                                            
-                                            // Complete liveness check
-                                            clearInterval(detectionInterval);
-                                            livenessInstruction.textContent = 'Verifikasi berhasil! ✅';
-                                            continueToFormButton.disabled = false;
-                                            continueToFormButton.classList.remove('hidden');
-                                            document.getElementById('startWebcamButton').classList.add('hidden');
-                                            break;
-                                        }
-                                    }
-                                }
-                                
-                                if (!handDetected) {
-                                    detectionFeedback.textContent = 'Angkat tangan kanan lebih tinggi...';
-                                }
-                            } else {
-                                detectionFeedback.textContent = 'Tunggu deteksi tangan...';
-                            }
-                        }
-                    } catch (error) {
-                        console.error('Error in detection:', error);
-                        detectionFeedback.textContent = 'Error dalam deteksi. Silakan coba lagi.';
-                    }
-                }, 300); // Check every 300ms
-            }
-
-            function stopWebcamAndDetection() {
-                if (detectionInterval) {
-                    clearInterval(detectionInterval);
-                    detectionInterval = null;
-                }
-                
-                if (mediaStream) {
-                    mediaStream.getTracks().forEach(track => track.stop());
-                    mediaStream = null;
-                }
-                
-                const webcamVideo = document.getElementById('webcamVideo');
-                if (webcamVideo) {
-                    webcamVideo.srcObject = null;
-                }
-                
-                livenessState = 'detecting_face';
-                smileBaseline = null;
-            }
-
             function initializeFormLogic() {
                 const backToMenuBtn = document.getElementById('backToMenuBtn');
                 const rulesContainer = document.getElementById('rulesContainer');
                 const faceDetectionContainer = document.getElementById('faceDetectionContainer');
+                const scratchCardContainer = document.getElementById('scratchCardContainer');
+                const memberFormContainer = document.getElementById('memberFormContainer');
                 const agreeToRulesCheckbox = document.getElementById('agreeToRules');
                 const continueButton = document.getElementById('continueButton');
+                const webcamVideo = document.getElementById('webcamVideo');
+                const faceDetectionMessage = document.getElementById('faceDetectionMessage');
                 const startWebcamButton = document.getElementById('startWebcamButton');
                 const continueToFormButton = document.getElementById('continueToFormButton');
-
-                if(backToMenuBtn) {
-                    backToMenuBtn.addEventListener('click', () => {
-                        stopWebcamAndDetection();
-                        showMainMenu();
-                    });
-                }
-
-                if(agreeToRulesCheckbox && continueButton) {
-                    agreeToRulesCheckbox.addEventListener('change', () => {
-                        continueButton.disabled = !agreeToRulesCheckbox.checked;
-                    });
-                }
+                const scratchCanvas = document.getElementById('scratchCanvas');
+                const scratchCardWrapper = document.getElementById('scratchCardWrapper');
+                const verifyPasswordButton = document.getElementById('verifyPasswordButton');
+                const passwordInput = document.getElementById('secretPassword');
+                const passwordError = document.getElementById('passwordError');
+                const memberForm = document.getElementById('memberForm');
+                const submitButton = document.getElementById('submitButton');
+                const buttonText = document.getElementById('buttonText');
+                const loadingSpinner = document.getElementById('loadingSpinner');
+                const socialMediaYes = document.querySelector('input[name="hasSocialMedia"][value="Ya"]');
+                const socialMediaNo = document.querySelector('input[name="hasSocialMedia"][value="Tidak"]');
+                const socialMediaInputContainer = document.getElementById('socialMediaInputContainer');
+                const testerSelect = document.getElementById('tester');
+                const divisiCommunitySelect = document.getElementById('divisiCommunity');
                 
-                if(continueButton && rulesContainer && faceDetectionContainer) {
-                    continueButton.addEventListener('click', () => {
-                        rulesContainer.classList.add('hidden');
-                        setAriaHidden(rulesContainer, true);
-                        faceDetectionContainer.classList.remove('hidden');
-                        setAriaHidden(faceDetectionContainer, false);
-                        faceDetectionContainer.classList.add('fade-in');
-                    });
+                // --- Face Detection Variables ---
+                let detectionInterval = null;
+                let mediaStream = null;
+
+                const notificationModal = {
+                    overlay: notificationModalOverlay,
+                    title: document.getElementById('modalTitle'),
+                    message: document.getElementById('modalMessage'),
+                    qrContainer: document.getElementById('modalQrCodeContainer'),
+                    downloadBtn: document.getElementById('downloadQrButton'),
+                    resetBtn: document.getElementById('modalResetFormButton')
+                };
+
+                Object.keys(testerData).forEach(name => {
+                    const option = document.createElement('option');
+                    option.value = name;
+                    option.textContent = name;
+                    testerSelect.appendChild(option);
+                });
+
+                function setSelectOptionColors(selectElement) {
+                    if (selectElement) {
+                        selectElement.style.color = 'white';
+                        selectElement.style.backgroundColor = '#1a1a1a';
+                    }
                 }
+                setSelectOptionColors(testerSelect);
+                setSelectOptionColors(divisiCommunitySelect);
+
+                function stopWebcamAndDetection() {
+                    if (detectionInterval) {
+                        clearInterval(detectionInterval);
+                        detectionInterval = null;
+                    }
+                    if (mediaStream) {
+                        mediaStream.getTracks().forEach(track => track.stop());
+                        mediaStream = null;
+                    }
+                    if (webcamVideo) {
+                        webcamVideo.srcObject = null;
+                    }
+                }
+
+                backToMenuBtn.addEventListener('click', () => {
+                    stopWebcamAndDetection();
+                    showMainMenu();
+                });
+
+                agreeToRulesCheckbox.addEventListener('change', () => {
+                    continueButton.disabled = !agreeToRulesCheckbox.checked;
+                });
                 
-                if(startWebcamButton) {
-                    startWebcamButton.addEventListener('click', async () => {
-                        startWebcamButton.disabled = true;
-                        const faceDetectionMessage = document.getElementById('faceDetectionMessage');
-                        const webcamVideo = document.getElementById('webcamVideo');
-                        faceDetectionMessage.textContent = 'Memuat model AI...';
+                continueButton.addEventListener('click', () => {
+                    rulesContainer.classList.add('hidden');
+                    setAriaHidden(rulesContainer, true);
+                    faceDetectionContainer.classList.remove('hidden');
+                    setAriaHidden(faceDetectionContainer, false);
+                    faceDetectionContainer.classList.add('fade-in');
+                });
+
+                startWebcamButton.addEventListener('click', async () => {
+                    startWebcamButton.disabled = true;
+                    faceDetectionMessage.textContent = 'Memuat model AI...';
+                    
+                    try {
+                        // Load face-api models
+                        const modelPath = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/model';
+                        await faceapi.nets.tinyFaceDetector.loadFromUri(modelPath);
+
+                        faceDetectionMessage.textContent = 'Meminta akses kamera...';
+                        mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                        webcamVideo.srcObject = mediaStream;
                         
-                        try {
-                            // Load models sequentially to prevent race conditions
-                            await loadFaceMeshModel();
-                            await loadHandsModel();
-
-                            faceDetectionMessage.textContent = 'Meminta akses kamera...';
-                            mediaStream = await navigator.mediaDevices.getUserMedia({ 
-                                video: { 
-                                    width: { ideal: 640 },
-                                    height: { ideal: 480 },
-                                    facingMode: 'user' 
-                                } 
-                            });
-                            webcamVideo.srcObject = mediaStream;
+                        webcamVideo.onplaying = () => {
+                             faceDetectionMessage.textContent = 'Kamera aktif. Posisikan wajah Anda...';
+                             webcamVideo.style.borderColor = NEON_BLUE;
                             
-                            webcamVideo.onplaying = () => {
-                                faceDetectionMessage.textContent = 'Kamera aktif.';
-                                webcamVideo.style.borderColor = NEON_BLUE;
-                                startLivenessCheck();
-                            };
-                        } catch (err) {
-                            console.error('Error accessing camera or models:', err);
-                            faceDetectionMessage.textContent = 'Gagal: Izin kamera ditolak atau model gagal dimuat.';
-                            if(webcamVideo) webcamVideo.style.borderColor = ERROR_COLOR;
-                            startWebcamButton.disabled = false;
-                        }
-                    });
-                }
+                             detectionInterval = setInterval(async () => {
+                                if (!webcamVideo.srcObject) return; // Stop if stream is gone
+                                const detection = await faceapi.detectSingleFace(webcamVideo, new faceapi.TinyFaceDetectorOptions());
+                                
+                                if (detection) {
+                                    faceDetectionMessage.textContent = 'Wajah Terdeteksi!';
+                                    webcamVideo.style.borderColor = NEON_PURPLE;
+                                    continueToFormButton.disabled = false;
+                                    startWebcamButton.classList.add('hidden');
+                                    continueToFormButton.classList.remove('hidden');
+                                    clearInterval(detectionInterval);
+                                } else {
+                                    faceDetectionMessage.textContent = 'Wajah tidak terdeteksi...';
+                                    webcamVideo.style.borderColor = ERROR_COLOR;
+                                }
+                            }, 500); // Check every 500ms
+                        };
+
+                    } catch (err) {
+                        console.error('Error accessing camera or models:', err);
+                        faceDetectionMessage.textContent = 'Gagal: Izin kamera ditolak atau model gagal dimuat.';
+                        webcamVideo.style.borderColor = ERROR_COLOR;
+                        startWebcamButton.disabled = false;
+                    }
+                });
                 
-                if (continueToFormButton) {
-                    continueToFormButton.addEventListener('click', () => {
-                        stopWebcamAndDetection();
-                        faceDetectionContainer.classList.add('hidden');
-                        setAriaHidden(faceDetectionContainer, true);
-                        // This should ideally show the next step, e.g., scratchCardContainer
-                        // For now, let's assume the flow is incomplete and just log it.
-                        console.log("Face verification complete. Next step (scratch card/form) would show here.");
-                        // For the purpose of fixing, we can go back to main menu.
-                        showMainMenu();
+                continueToFormButton.addEventListener('click', () => {
+                    stopWebcamAndDetection();
+                    faceDetectionContainer.classList.add('hidden');
+                    setAriaHidden(faceDetectionContainer, true);
+                    scratchCardContainer.classList.remove('hidden');
+                    setAriaHidden(scratchCardContainer, false);
+                    scratchCardContainer.classList.add('fade-in');
+                    // Ensure canvas is set up correctly after being displayed
+                    setTimeout(() => {
+                        const setupCanvasEvent = new Event('setupcanvas');
+                        scratchCanvas.dispatchEvent(setupCanvasEvent);
+                    }, 10);
+                });
+                
+                if (scratchCanvas) {
+                    const ctx = scratchCanvas.getContext('2d');
+                    let isScratching = false;
+                    const setupCanvas = () => {
+                        scratchCanvas.width = scratchCardWrapper.clientWidth;
+                        scratchCanvas.height = 200;
+                        const gradient = ctx.createLinearGradient(0, 0, scratchCanvas.width, scratchCanvas.height);
+                        gradient.addColorStop(0, NEON_BLUE);
+                        gradient.addColorStop(1, NEON_PURPLE);
+                        ctx.fillStyle = gradient;
+                        ctx.fillRect(0, 0, scratchCanvas.width, scratchCanvas.height);
+                        ctx.fillStyle = 'rgba(255,255,255,0.8)';
+                        ctx.font = 'bold 24px "Orbitron"';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText('GOSOK DI SINI', scratchCanvas.width / 2, scratchCanvas.height / 2);
+                        ctx.globalCompositeOperation = 'destination-out';
+                    };
+                    const getPos = (e) => ({
+                        x: (e.clientX || e.touches[0].clientX) - scratchCanvas.getBoundingClientRect().left,
+                        y: (e.clientY || e.touches[0].clientY) - scratchCanvas.getBoundingClientRect().top
                     });
+                    const scratch = (e) => {
+                        if (!isScratching) return;
+                        e.preventDefault();
+                        const pos = getPos(e);
+                        ctx.beginPath();
+                        ctx.arc(pos.x, pos.y, 30, 0, Math.PI * 2, false);
+                        ctx.fill();
+                    };
+                    const start = (e) => {
+                        isScratching = true;
+                        scratch(e);
+                    };
+                    const end = () => {
+                        isScratching = false;
+                    };
+                    window.addEventListener('resize', setupCanvas);
+                    scratchCanvas.addEventListener('setupcanvas', setupCanvas);
+                    scratchCanvas.addEventListener('mousedown', start);
+                    scratchCanvas.addEventListener('mouseup', end);
+                    scratchCanvas.addEventListener('mouseleave', end);
+                    scratchCanvas.addEventListener('mousemove', scratch);
+                    scratchCanvas.addEventListener('touchstart', start, { passive: false });
+                    scratchCanvas.addEventListener('touchend', end);
+                    scratchCanvas.addEventListener('touchmove', scratch, { passive: false });
+                    setupCanvas();
                 }
+
+                verifyPasswordButton.addEventListener('click', () => {
+                    if (passwordInput.value.trim().toUpperCase() === 'X5') {
+                        passwordError.classList.add('hidden');
+                        scratchCardContainer.classList.add('hidden');
+                        setAriaHidden(scratchCardContainer, true);
+                        memberFormContainer.classList.remove('hidden');
+                        setAriaHidden(memberFormContainer, false);
+                        memberFormContainer.classList.add('fade-in');
+                    } else {
+                        passwordError.classList.remove('hidden');
+                    }
+                });
+
+                socialMediaYes.addEventListener('change', () => {
+                    socialMediaInputContainer.classList.remove('hidden');
+                    socialMediaInputContainer.querySelector('input').required = true;
+                });
+                socialMediaNo.addEventListener('change', () => {
+                    socialMediaInputContainer.classList.add('hidden');
+                    socialMediaInputContainer.querySelector('input').required = false;
+                });
+
+                memberForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    submitButton.disabled = true;
+                    buttonText.textContent = 'Mengirim...';
+                    loadingSpinner.classList.remove('hidden');
+                    const formData = new FormData(memberForm);
+                    const data = Object.fromEntries(formData.entries());
+                    data.type = 'registration';
+                    if (data.hasSocialMedia === 'Tidak') data.sosialMediaName = 'Tidak ada';
+                    
+                    try {
+                        await fetch(googleAppsScriptURL, {
+                            method: 'POST',
+                            mode: 'no-cors',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(data)
+                        });
+                        
+                        // Isi data passport
+                        document.getElementById('passportName').textContent = data.namaPanggilan;
+                        document.getElementById('passportNickname').textContent = data.nicknameAyodance;
+                        document.getElementById('passportBirth').textContent = data.tanggalLahir;
+                        document.getElementById('passportDomisili').textContent = data.domisili;
+                        document.getElementById('passportDivisi').textContent = data.divisiCommunity;
+                        document.getElementById('passportTester').textContent = data.tester;
+                        
+                        // Generate avatar initials
+                        const initials = getInitials(data.namaPanggilan);
+                        document.getElementById('avatarInitials').textContent = initials;
+                        
+                        // Generate random ID
+                        const idNumber = 'XF-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+                        document.getElementById('passportId').textContent = idNumber;
+
+                        notificationModalOverlay.classList.add('show');
+                        setAriaHidden(notificationModalOverlay, false);
+                        memberFormContainer.classList.add('hidden');
+                        setAriaHidden(memberFormContainer, true);
+                        
+                        // Show notification
+                        showNotification('Pendaftaran Sukses', 'Data Anda berhasil dikirim!');
+                    } catch (error) {
+                        console.error('Error submitting form:', error);
+                        showNotification('Kesalahan Sistem', 'Gagal mengirim data. Silakan coba lagi.');
+                    } finally {
+                        submitButton.disabled = false;
+                        buttonText.textContent = 'Kirim Data';
+                        loadingSpinner.classList.add('hidden');
+                    }
+                });
+                
+                // Event listener untuk download passport
+                document.getElementById('downloadPassportButton').addEventListener('click', function() {
+                    const passport = document.getElementById('passportContainer');
+                    
+                    html2canvas(passport).then(canvas => {
+                        const image = canvas.toDataURL('image/png');
+                        const link = document.createElement('a');
+                        link.href = image;
+                        link.download = `passport-${document.getElementById('passportName').textContent}.png`;
+                        link.click();
+                    });
+                });
+                
+                // Mengubah fungsionalitas tombol "Hubungi Tester" untuk mengarah ke WA Tester
+                notificationModal.resetBtn.addEventListener('click', () => {
+                    const testerName = document.getElementById('passportTester').textContent;
+                    const phone = testerData[testerName];
+                    const message = encodeURIComponent(`Halo ${testerName}, saya sudah mengisi formulir dan mendapatkan Digital ID. Mohon bantuannya untuk proses selanjutnya.`);
+                    const waLink = `https://wa.me/${phone}?text=${message}`;
+                    window.open(waLink, '_blank');
+                    
+                    // Menutup modal setelah mengklik
+                    notificationModal.overlay.classList.remove('show');
+                    setAriaHidden(notificationModal.overlay, true);
+                    showMainMenu();
+                });
             }
 
             // --- Main Menu Event Listeners ---
@@ -2086,6 +1975,7 @@
                 
                 changeNickQrSection.classList.remove('hidden');
                 
+                // Show notification
                 showNotification('Tester Dipilih', `QR untuk ${testerName} berhasil dibuat`);
             });
 
@@ -2144,4 +2034,3 @@
     </script>
 </body>
 </html>
-
