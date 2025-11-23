@@ -516,12 +516,12 @@
 
         #webcamVideo {
             width: 100%;
-            max-width: 400px;
+            max-width: 640px;
             height: auto;
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
             background-color: #000;
-            margin: 20px auto;
+            margin: 0 auto;
             display: block;
             border: 4px solid var(--neon-blue);
             transition: border-color .5s ease-in-out;
@@ -1069,3 +1069,124 @@
             70% { box-shadow: 0 0 0 10px rgba(0, 255, 255, 0); }
             100% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0); }
         }
+
+/* Scanner Logs */
+#scannerLogs {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.85);
+    border: 1px solid var(--neon-blue);
+    box-shadow: 0 0 10px var(--neon-blue);
+    padding: 15px;
+    border-radius: 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    color: var(--neon-blue);
+    z-index: 20;
+    text-align: left;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+}
+
+.log-entry {
+    margin-bottom: 5px;
+    opacity: 0;
+    animation: fadeIn 0.3s forwards;
+    line-height: 1.4;
+}
+
+.log-status-ok {
+    color: var(--neon-green);
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+.log-status-verified {
+    color: var(--neon-green);
+    font-weight: bold;
+    text-shadow: 0 0 10px var(--neon-green);
+    margin-left: 5px;
+    animation: blink 0.8s infinite;
+}
+
+/* Access Denied Overlay */
+#accessDeniedOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(50, 0, 0, 0.6);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 50;
+    backdrop-filter: blur(4px);
+    animation: flashScreen 0.5s ease-in-out;
+    border: 3px solid var(--error-color);
+    border-radius: 12px;
+}
+
+.access-denied-text {
+    color: #FFF;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 900;
+    text-align: center;
+    text-shadow: 0 0 10px red, 0 0 20px red;
+    margin-bottom: 20px;
+    background: rgba(0,0,0,0.8);
+    padding: 15px;
+    border: 1px solid red;
+    width: 80%;
+}
+
+@keyframes flashScreen {
+    0% { background-color: rgba(255, 0, 0, 0); }
+    10% { background-color: rgba(255, 0, 0, 0.6); }
+    20% { background-color: rgba(255, 0, 0, 0.2); }
+    30% { background-color: rgba(255, 0, 0, 0.6); }
+    100% { background-color: rgba(50, 0, 0, 0.6); }
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* Video container wrapper for positioning */
+#videoContainerWrapper {
+    position: relative;
+    width: 100%;
+    max-width: 640px;
+    margin: 20px auto;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid var(--neon-blue);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+}
+
+/* Responsive adjustments for scanner */
+@media (max-width: 768px) {
+    #webcamVideo, #videoContainerWrapper {
+        max-width: 100%;
+        border-radius: 8px;
+    }
+
+    #scannerLogs {
+        font-size: 0.8rem;
+        padding: 10px;
+        min-height: 80px;
+    }
+
+    .access-denied-text {
+        font-size: 1.2rem;
+        padding: 10px;
+    }
+}

@@ -246,7 +246,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div id="faceDetectionContainer" class="hidden" aria-hidden="true">
                     <h2 class="text-3xl font-bold text-center mb-8 glitch-text">VERIFIKASI WAJAH</h2>
                     <p class="text-center mb-4">Untuk keamanan, harap posisikan wajah Anda di depan kamera. Data tidak akan disimpan.</p>
-                    <video id="webcamVideo" autoplay muted playsinline></video>
+
+                    <div id="videoContainerWrapper">
+                        <video id="webcamVideo" autoplay muted playsinline></video>
+                        <div id="scannerLogs" class="hidden"></div>
+                        <div id="accessDeniedOverlay" class="hidden">
+                            <div class="access-denied-text">
+                                WAJAHMU TIDAK DIKETEMUKAN<br>RETRY
+                            </div>
+                            <button type="button" id="retryWebcamButton" class="btn" style="width: auto; padding: 10px 30px; margin-top:10px;">COBA LAGI</button>
+                        </div>
+                    </div>
+
                     <p id="faceDetectionMessage" class="text-center" role="status" aria-live="polite">Menunggu akses kamera...</p>
                     <div class="mt-4 space-y-3">
                         <button type="button" id="startWebcamButton" class="btn text-lg">Mulai Deteksi</button>
@@ -341,6 +352,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 const agreeToRulesCheckbox = document.getElementById('agreeToRules');
                 const continueButton = document.getElementById('continueButton');
                 const webcamVideo = document.getElementById('webcamVideo');
+                const scannerLogs = document.getElementById('scannerLogs');
+                const accessDeniedOverlay = document.getElementById('accessDeniedOverlay');
+                const retryWebcamButton = document.getElementById('retryWebcamButton');
                 const faceDetectionMessage = document.getElementById('faceDetectionMessage');
                 const startWebcamButton = document.getElementById('startWebcamButton');
                 const continueToFormButton = document.getElementById('continueToFormButton');
@@ -362,6 +376,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 // --- Face Detection Variables ---
                 let detectionInterval = null;
                 let mediaStream = null;
+                let failureTimer = null;
+                let isVerificationProcessRunning = false;
 
                 const notificationModal = {
                     overlay: notificationModalOverlay,
@@ -393,6 +409,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         clearInterval(detectionInterval);
                         detectionInterval = null;
                     }
+                    if (failureTimer) {
+                        clearTimeout(failureTimer);
+                        failureTimer = null;
+                    }
                     if (mediaStream) {
                         mediaStream.getTracks().forEach(track => track.stop());
                         mediaStream = null;
@@ -400,11 +420,30 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (webcamVideo) {
                         webcamVideo.srcObject = null;
                     }
+                    isVerificationProcessRunning = false;
                 }
 
                 backToMenuBtn.addEventListener('click', () => {
                     stopWebcamAndDetection();
                     showMainMenu();
+                });
+
+                retryWebcamButton.addEventListener('click', () => {
+                    accessDeniedOverlay.classList.add('hidden');
+                    scannerLogs.classList.add('hidden');
+                    scannerLogs.innerHTML = '';
+                    stopWebcamAndDetection();
+
+                    // Reset UI
+                    startWebcamButton.classList.remove('hidden');
+                    startWebcamButton.disabled = false;
+                    continueToFormButton.classList.add('hidden');
+                    continueToFormButton.disabled = true;
+                    webcamVideo.style.borderColor = '#00FFFF'; // NEON_BLUE
+                    faceDetectionMessage.textContent = 'Menunggu akses kamera...';
+
+                    // Auto restart
+                    startWebcamButton.click();
                 });
 
                 agreeToRulesCheckbox.addEventListener('change', () => {
@@ -419,9 +458,63 @@ document.addEventListener('DOMContentLoaded', function() {
                     faceDetectionContainer.classList.add('fade-in');
                 });
 
+                const addLog = (text, status = '') => {
+                    const line = document.createElement('div');
+                    line.className = 'log-entry';
+
+                    let statusHtml = '';
+                    if (status === 'OK') statusHtml = `<span class="log-status-ok">OK</span>`;
+                    if (status === 'VERIFIED') statusHtml = `<span class="log-status-verified">VERIFIED</span>`;
+
+                    line.innerHTML = `> ${text}${statusHtml}`;
+                    scannerLogs.appendChild(line);
+                    scannerLogs.scrollTop = scannerLogs.scrollHeight;
+                };
+
+                const runVerificationSequence = () => {
+                    if (isVerificationProcessRunning) return;
+                    isVerificationProcessRunning = true;
+
+                    // Stop detection and timer
+                    clearInterval(detectionInterval);
+                    clearTimeout(failureTimer);
+
+                    faceDetectionMessage.textContent = 'Wajah Terdeteksi! Menganalisa...';
+                    webcamVideo.style.borderColor = NEON_PURPLE;
+                    scannerLogs.classList.remove('hidden');
+
+                    // Sequence
+                    setTimeout(() => addLog('Analyzing wajah...', 'OK'), 500);
+
+                    setTimeout(() => {
+                        addLog('Checking blacklist-member xfive...', 'OK');
+                    }, 2000);
+
+                    setTimeout(() => {
+                        addLog('Wajah diterima oleh sistem...', 'VERIFIED');
+                        faceDetectionMessage.textContent = 'Verifikasi Berhasil!';
+
+                        // Enable continue
+                        continueToFormButton.disabled = false;
+                        startWebcamButton.classList.add('hidden');
+                        continueToFormButton.classList.remove('hidden');
+                    }, 3500);
+                };
+
+                const triggerAccessDenied = () => {
+                    if (isVerificationProcessRunning) return; // Don't fail if already verified
+
+                    stopWebcamAndDetection();
+                    accessDeniedOverlay.classList.remove('hidden');
+                    faceDetectionMessage.textContent = 'Akses Ditolak.';
+                    webcamVideo.style.borderColor = ERROR_COLOR;
+                };
+
                 startWebcamButton.addEventListener('click', async () => {
                     startWebcamButton.disabled = true;
                     faceDetectionMessage.textContent = 'Memuat model AI...';
+                    scannerLogs.innerHTML = ''; // Reset logs
+                    isVerificationProcessRunning = false;
 
                     try {
                         // Load face-api models
@@ -436,19 +529,22 @@ document.addEventListener('DOMContentLoaded', function() {
                              faceDetectionMessage.textContent = 'Kamera aktif. Posisikan wajah Anda...';
                              webcamVideo.style.borderColor = NEON_BLUE;
 
+                             // Start Failure Timer (10 seconds)
+                             failureTimer = setTimeout(() => {
+                                 triggerAccessDenied();
+                             }, 10000);
+
                              detectionInterval = setInterval(async () => {
                                 if (!webcamVideo.srcObject) return; // Stop if stream is gone
+
+                                // Use face-api to detect
                                 const detection = await faceapi.detectSingleFace(webcamVideo, new faceapi.TinyFaceDetectorOptions());
 
                                 if (detection) {
-                                    faceDetectionMessage.textContent = 'Wajah Terdeteksi!';
-                                    webcamVideo.style.borderColor = NEON_PURPLE;
-                                    continueToFormButton.disabled = false;
-                                    startWebcamButton.classList.add('hidden');
-                                    continueToFormButton.classList.remove('hidden');
-                                    clearInterval(detectionInterval);
+                                    // Face found -> Run sequence
+                                    runVerificationSequence();
                                 } else {
-                                    faceDetectionMessage.textContent = 'Wajah tidak terdeteksi...';
+                                    // No face
                                     webcamVideo.style.borderColor = ERROR_COLOR;
                                 }
                             }, 500); // Check every 500ms
