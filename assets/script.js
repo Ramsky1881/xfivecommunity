@@ -405,7 +405,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // My loop is 500ms. 100 frames is meaningless here unless I change loop speed.
                 // But user explanation: "Jika kamera jalan di 30fps, 100 frame itu sekitar 3,3 detik."
                 // Since I run at 2 FPS (500ms), I need ~6-8 frames to reach 3-4 seconds.
-                const FRAMES_THRESHOLD = 8;
+                const FRAMES_THRESHOLD = 240;
 
                 // Fallback Elements
                 const fallbackInputs = document.getElementById('fallbackInputs');
@@ -688,7 +688,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                  if (!isFallbackMode && !isVerificationProcessRunning) {
                                      triggerAccessDenied();
                                  }
-                             }, 15000);
+                             }, 120000);
 
                              detectionInterval = setInterval(async () => {
                                 if (!webcamVideo.srcObject || isFallbackMode) return; // Stop if stream is gone or in fallback
