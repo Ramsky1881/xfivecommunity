@@ -244,12 +244,23 @@ document.addEventListener('DOMContentLoaded', function() {
                     <button type="button" id="continueButton" class="btn text-lg mt-8" disabled>Lanjutkan</button>
                 </div>
                 <div id="faceDetectionContainer" class="hidden" aria-hidden="true">
-                    <h2 class="text-3xl font-bold text-center mb-8 glitch-text">VERIFIKASI WAJAH</h2>
-                    <p class="text-center mb-4">Untuk keamanan, harap posisikan wajah Anda di depan kamera. Data tidak akan disimpan.</p>
-                    <video id="webcamVideo" autoplay muted playsinline></video>
-                    <p id="faceDetectionMessage" class="text-center" role="status" aria-live="polite">Menunggu akses kamera...</p>
+                    <h2 class="text-3xl font-bold text-center mb-4 glitch-text">LIVENESS CHECK INITIATED</h2>
+                    <div class="relative w-full max-w-md mx-auto aspect-video overflow-hidden rounded-lg border-2 border-cyan-400 shadow-lg shadow-cyan-400/30 mb-4">
+                        <video id="webcamVideo" autoplay muted playsinline class="absolute top-0 left-0 w-full h-full object-cover"></video>
+                        <canvas id="faceOverlayCanvas" class="absolute top-0 left-0 w-full h-full"></canvas>
+                        <div id="targetingReticle" class="absolute w-8 h-8 border-2 border-red-500 rounded-full transition-all duration-300 hidden" style="transform: translate(-50%, -50%);"></div>
+                        <div id="accessGrantedOverlay" class="absolute inset-0 bg-green-500/80 flex items-center justify-center text-4xl font-bold text-white tracking-widest hidden opacity-0 transition-opacity">ACCESS GRANTED</div>
+                        <div id="accessDeniedOverlay" class="absolute inset-0 bg-red-500/80 flex items-center justify-center text-3xl font-bold text-white tracking-widest hidden opacity-0 transition-opacity">VITAL SIGNS NEGATIVE</div>
+                    </div>
+                    <div id="challengeInstruction" class="text-center text-xl font-semibold text-cyan-300 mt-4 h-8">AWAITING SYSTEM COMMAND...</div>
+                    <div class="w-full bg-gray-700/50 rounded-full h-4 mt-4 overflow-hidden border border-cyan-500/50">
+                        <div id="bioSynchRateBar" class="bg-cyan-400 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                    <p class="text-center text-sm mt-1 text-cyan-400">BIOSYNCH RATE: <span id="bioSynchRateText">0%</span></p>
+                    <div id="activityLog" class="mt-4 bg-black/50 p-3 rounded-md h-24 overflow-hidden text-xs text-green-400 font-mono">
+                    </div>
                     <div class="mt-4 space-y-3">
-                        <button type="button" id="startWebcamButton" class="btn text-lg">Mulai Deteksi</button>
+                        <button type="button" id="startLivenessCheckButton" class="btn text-lg">INITIATE LIVENESS SCAN</button>
                         <button type="button" id="continueToFormButton" class="btn text-lg hidden" disabled>Lanjutkan</button>
                     </div>
                 </div>
@@ -341,8 +352,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 const agreeToRulesCheckbox = document.getElementById('agreeToRules');
                 const continueButton = document.getElementById('continueButton');
                 const webcamVideo = document.getElementById('webcamVideo');
-                const faceDetectionMessage = document.getElementById('faceDetectionMessage');
-                const startWebcamButton = document.getElementById('startWebcamButton');
+                const faceOverlayCanvas = document.getElementById('faceOverlayCanvas');
+                const challengeInstruction = document.getElementById('challengeInstruction');
+                const bioSynchRateBar = document.getElementById('bioSynchRateBar');
+                const bioSynchRateText = document.getElementById('bioSynchRateText');
+                const activityLog = document.getElementById('activityLog');
+                const startLivenessCheckButton = document.getElementById('startLivenessCheckButton');
                 const continueToFormButton = document.getElementById('continueToFormButton');
                 const scratchCanvas = document.getElementById('scratchCanvas');
                 const scratchCardWrapper = document.getElementById('scratchCardWrapper');
@@ -359,9 +374,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 const testerSelect = document.getElementById('tester');
                 const divisiCommunitySelect = document.getElementById('divisiCommunity');
 
-                // --- Face Detection Variables ---
-                let detectionInterval = null;
+                // --- Liveness Check State Management ---
+                let livenessInterval = null;
                 let mediaStream = null;
+                let securityClearanceLevel = 0;
+                let bioSynchRate = 0;
+                let activeSecurityProtocol = null;
+                let challengeTimeout;
+
+                const requiredClearance = 3; // Number of successful challenges needed
+
+                const livenessChallenges = [
+                    { protocol: 'blink', instruction: 'INITIATE OCULAR REFLEX TEST' },
+                    { protocol: 'smile', instruction: 'VERIFYING FACIAL ELASTICITY' },
+                    { protocol: 'openMouth', instruction: 'CALIBRATING MANDIBLE SENSOR' },
+                    { protocol: 'turnHeadLeft', instruction: 'CRANIAL ROTATION: LEFT' },
+                    { protocol: 'turnHeadRight', instruction: 'CRANIAL ROTATION: RIGHT' },
+                ];
+                let availableChallenges = [...livenessChallenges];
 
                 const notificationModal = {
                     overlay: notificationModalOverlay,
@@ -388,10 +418,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 setSelectOptionColors(testerSelect);
                 setSelectOptionColors(divisiCommunitySelect);
 
-                function stopWebcamAndDetection() {
-                    if (detectionInterval) {
-                        clearInterval(detectionInterval);
-                        detectionInterval = null;
+                function stopLivenessCheck() {
+                    if (livenessInterval) {
+                        clearInterval(livenessInterval);
+                        livenessInterval = null;
+                    }
+                    if (challengeTimeout) {
+                        clearTimeout(challengeTimeout);
                     }
                     if (mediaStream) {
                         mediaStream.getTracks().forEach(track => track.stop());
@@ -400,10 +433,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (webcamVideo) {
                         webcamVideo.srcObject = null;
                     }
+                    // Reset UI
+                    const ctx = faceOverlayCanvas.getContext('2d');
+                    ctx.clearRect(0, 0, faceOverlayCanvas.width, faceOverlayCanvas.height);
+                    challengeInstruction.textContent = 'AWAITING SYSTEM COMMAND...';
                 }
 
                 backToMenuBtn.addEventListener('click', () => {
-                    stopWebcamAndDetection();
+                    stopLivenessCheck();
                     showMainMenu();
                 });
 
@@ -419,51 +456,237 @@ document.addEventListener('DOMContentLoaded', function() {
                     faceDetectionContainer.classList.add('fade-in');
                 });
 
-                startWebcamButton.addEventListener('click', async () => {
-                    startWebcamButton.disabled = true;
-                    faceDetectionMessage.textContent = 'Memuat model AI...';
-
+                startLivenessCheckButton.addEventListener('click', async () => {
+                    startLivenessCheckButton.disabled = true;
+                    addToLog('> BOOTING SECURITY SUBSYSTEM...');
                     try {
-                        // Load face-api models
+                        addToLog('> LOADING BIOMETRIC MODELS...');
                         const modelPath = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/model';
-                        await faceapi.nets.tinyFaceDetector.loadFromUri(modelPath);
+                        await Promise.all([
+                            faceapi.nets.tinyFaceDetector.loadFromUri(modelPath),
+                            faceapi.nets.faceLandmark68Net.loadFromUri(modelPath),
+                            faceapi.nets.faceExpressionNet.loadFromUri(modelPath)
+                        ]);
+                        addToLog('> MODELS LOADED SUCCESSFULLY.');
 
-                        faceDetectionMessage.textContent = 'Meminta akses kamera...';
+                        addToLog('> REQUESTING CAMERA ACCESS...');
                         mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
                         webcamVideo.srcObject = mediaStream;
 
                         webcamVideo.onplaying = () => {
-                             faceDetectionMessage.textContent = 'Kamera aktif. Posisikan wajah Anda...';
-                             webcamVideo.style.borderColor = NEON_BLUE;
+                            addToLog('> CAMERA STREAM ESTABLISHED.');
+                            addToLog('> STARTING REAL-TIME ANALYSIS...');
 
-                             detectionInterval = setInterval(async () => {
-                                if (!webcamVideo.srcObject) return; // Stop if stream is gone
-                                const detection = await faceapi.detectSingleFace(webcamVideo, new faceapi.TinyFaceDetectorOptions());
+                            livenessInterval = setInterval(async () => {
+                                if (!webcamVideo.srcObject || webcamVideo.paused || webcamVideo.ended) return;
 
-                                if (detection) {
-                                    faceDetectionMessage.textContent = 'Wajah Terdeteksi!';
-                                    webcamVideo.style.borderColor = NEON_PURPLE;
-                                    continueToFormButton.disabled = false;
-                                    startWebcamButton.classList.add('hidden');
-                                    continueToFormButton.classList.remove('hidden');
-                                    clearInterval(detectionInterval);
+                                const detections = await faceapi.detectAllFaces(webcamVideo, new faceapi.TinyFaceDetectorOptions())
+                                    .withFaceLandmarks()
+                                    .withFaceExpressions();
+
+                                if (detections && detections.length > 0) {
+                                    const resizedDetections = faceapi.resizeResults(detections, { width: faceOverlayCanvas.width, height: faceOverlayCanvas.height });
+                                    const landmarks = resizedDetections[0].landmarks;
+                                    const expressions = resizedDetections[0].expressions;
+                                    const ctx = faceOverlayCanvas.getContext('2d');
+                                    ctx.clearRect(0, 0, faceOverlayCanvas.width, faceOverlayCanvas.height);
+
+                                    // Draw face mesh
+                                    faceapi.draw.drawFaceLandmarks(faceOverlayCanvas, resizedDetections);
+
+                                    // Handle targeting reticle
+                                    const targetingReticle = document.getElementById('targetingReticle');
+                                    if (activeSecurityProtocol === 'turnHeadLeft' || activeSecurityProtocol === 'turnHeadRight') {
+                                        const nose = landmarks.getNose();
+                                        const noseTip = nose[3];
+                                        targetingReticle.style.left = `${noseTip.x}px`;
+                                        targetingReticle.style.top = `${noseTip.y}px`;
+                                        targetingReticle.classList.remove('hidden');
+
+                                        const leftEyeCorner = landmarks.getLeftEye()[0];
+                                        const rightEyeCorner = landmarks.getRightEye()[3];
+                                        const headTurnRatio = (noseTip.x - leftEyeCorner.x) / (rightEyeCorner.x - leftEyeCorner.x);
+
+                                        if ((activeSecurityProtocol === 'turnHeadLeft' && headTurnRatio < 0.3) || (activeSecurityProtocol === 'turnHeadRight' && headTurnRatio > 0.7)) {
+                                            targetingReticle.classList.add('locked-on');
+                                        } else {
+                                            targetingReticle.classList.remove('locked-on');
+                                        }
+                                    } else {
+                                        targetingReticle.classList.add('hidden');
+                                    }
+
+
+                                    if (activeSecurityProtocol) {
+                                        let vitalSignDetected = false;
+                                        switch (activeSecurityProtocol) {
+                                            case 'blink':
+                                                const leftEye = landmarks.getLeftEye();
+                                                const rightEye = landmarks.getRightEye();
+                                                const eyeAspectRatio = (getEyeAspectRatio(leftEye) + getEyeAspectRatio(rightEye)) / 2;
+                                                if (eyeAspectRatio < 0.2) { // Threshold for blink
+                                                    vitalSignDetected = true;
+                                                }
+                                                break;
+                                            case 'smile':
+                                                if (expressions.happy > 0.8) { // Threshold for smile
+                                                    vitalSignDetected = true;
+                                                }
+                                                break;
+                                            case 'openMouth':
+                                                const mouth = landmarks.getMouth();
+                                                const mouthAspectRatio = getMouthAspectRatio(mouth);
+                                                if (mouthAspectRatio > 0.6) { // Threshold for open mouth
+                                                    vitalSignDetected = true;
+                                                }
+                                                break;
+                                            case 'turnHeadLeft':
+                                            case 'turnHeadRight':
+                                                // Simplified head turn detection based on nose position relative to eye corners
+                                                const nose = landmarks.getNose()[3]; // Tip of the nose
+                                                const leftEyeCorner = landmarks.getLeftEye()[0];
+                                                const rightEyeCorner = landmarks.getRightEye()[3];
+                                                const headTurnRatio = (nose.x - leftEyeCorner.x) / (rightEyeCorner.x - leftEyeCorner.x);
+                                                
+                                                if (activeSecurityProtocol === 'turnHeadLeft' && headTurnRatio < 0.3) {
+                                                    vitalSignDetected = true;
+                                                } else if (activeSecurityProtocol === 'turnHeadRight' && headTurnRatio > 0.7) {
+                                                    vitalSignDetected = true;
+                                                }
+                                                break;
+                                        }
+                                        if (vitalSignDetected) {
+                                            handleChallengeSuccess();
+                                        }
+                                    }
                                 } else {
-                                    faceDetectionMessage.textContent = 'Wajah tidak terdeteksi...';
-                                    webcamVideo.style.borderColor = ERROR_COLOR;
+                                    // Handle case where face is not detected during a challenge
                                 }
-                            }, 500); // Check every 500ms
+                            }, 200); // Analyze every 200ms
+
+                            startNextChallenge();
                         };
 
                     } catch (err) {
-                        console.error('Error accessing camera or models:', err);
-                        faceDetectionMessage.textContent = 'Gagal: Izin kamera ditolak atau model gagal dimuat.';
-                        webcamVideo.style.borderColor = ERROR_COLOR;
-                        startWebcamButton.disabled = false;
+                        console.error('Liveness check initialization failed:', err);
+                        addToLog(`> ERROR: ${err.message}`, true);
+                        challengeInstruction.textContent = 'SYSTEM ERROR: RETRY';
+                        startLivenessCheckButton.disabled = false;
                     }
                 });
 
+                function updateProgressBar() {
+                    bioSynchRate = (securityClearanceLevel / requiredClearance) * 100;
+                    bioSynchRateBar.style.width = `${bioSynchRate}%`;
+                    bioSynchRateText.textContent = `${Math.round(bioSynchRate)}%`;
+                }
+
+                function addToLog(message, isError = false) {
+                    const logEntry = document.createElement('p');
+                    logEntry.textContent = message;
+                    if (isError) {
+                        logEntry.style.color = 'var(--error-color)';
+                    }
+                    activityLog.appendChild(logEntry);
+                    // Auto-scroll to the bottom
+                    activityLog.scrollTop = activityLog.scrollHeight;
+                }
+
+                function startNextChallenge() {
+                    if (securityClearanceLevel >= requiredClearance) {
+                        handleLivenessSuccess();
+                        return;
+                    }
+
+                    if (availableChallenges.length === 0) {
+                        availableChallenges = [...livenessChallenges]; // Replenish if empty
+                    }
+
+                    const challengeIndex = Math.floor(Math.random() * availableChallenges.length);
+                    const nextChallenge = availableChallenges.splice(challengeIndex, 1)[0];
+                    activeSecurityProtocol = nextChallenge.protocol;
+
+                    challengeInstruction.textContent = nextChallenge.instruction;
+                    addToLog(`> PROTOCOL ACTIVATED: ${nextChallenge.instruction}`);
+
+                    // Set a timeout for the user to complete the action
+                    challengeTimeout = setTimeout(handleLivenessFailure, 7000); // 7 seconds to complete
+                }
+
+                function handleChallengeSuccess() {
+                    clearTimeout(challengeTimeout);
+                    securityClearanceLevel++;
+                    updateProgressBar();
+                    addToLog(`> VITAL SIGN DETECTED. CLEARANCE LEVEL: ${securityClearanceLevel}`);
+
+                    // Visual and audio feedback
+                    faceOverlayCanvas.classList.add('flash-success');
+                    // In a real implementation, you'd play a sound here. e.g., new Audio('bip.mp3').play();
+                    setTimeout(() => faceOverlayCanvas.classList.remove('flash-success'), 400);
+
+                    activeSecurityProtocol = null; // Ready for the next challenge
+                    setTimeout(startNextChallenge, 1500); // Wait 1.5s before next challenge
+                }
+
+                function handleLivenessFailure() {
+                    clearTimeout(challengeTimeout);
+                    addToLog('> BIOMETRIC SIGNATURE NOT DETECTED.', true);
+
+                    // Show failure overlay and flash effect
+                    const deniedOverlay = document.getElementById('accessDeniedOverlay');
+                    deniedOverlay.classList.remove('hidden');
+                    deniedOverlay.classList.add('show');
+                    document.getElementById('faceDetectionContainer').classList.add('flash-fail');
+
+                    setTimeout(() => {
+                        deniedOverlay.classList.remove('show');
+                        deniedOverlay.classList.add('hidden');
+                        document.getElementById('faceDetectionContainer').classList.remove('flash-fail');
+                        // Reset and try another challenge
+                        activeSecurityProtocol = null;
+                        startNextChallenge();
+                    }, 2000);
+                }
+
+                function getEyeAspectRatio(eye) {
+                    const [p1, p2, p3, p4, p5, p6] = eye;
+                    const verticalDist1 = Math.hypot(p2.x - p6.x, p2.y - p6.y);
+                    const verticalDist2 = Math.hypot(p3.x - p5.x, p3.y - p5.y);
+                    const horizontalDist = Math.hypot(p1.x - p4.x, p1.y - p4.y);
+                    return (verticalDist1 + verticalDist2) / (2.0 * horizontalDist);
+                }
+
+                function getMouthAspectRatio(mouth) {
+                    const [p1, p2, p3, p4, p5, p6, p7, p8] = mouth.slice(12); // Use inner mouth landmarks
+                    const verticalDist = Math.hypot(p2.x - p8.x, p2.y - p8.y) + Math.hypot(p3.x - p7.x, p3.y - p7.y) + Math.hypot(p4.x - p6.x, p4.y - p6.y);
+                    const horizontalDist = Math.hypot(p1.x - p5.x, p1.y - p5.y);
+                    return verticalDist / (2.0 * horizontalDist);
+                }
+
+                function handleLivenessSuccess() {
+                    clearInterval(livenessInterval);
+                    addToLog('> ALL SECURITY PROTOCOLS PASSED.');
+                    addToLog('> ACCESS GRANTED.');
+                    challengeInstruction.textContent = 'ACCESS GRANTED';
+
+                    const grantedOverlay = document.getElementById('accessGrantedOverlay');
+                    grantedOverlay.classList.remove('hidden');
+                    grantedOverlay.classList.add('show');
+
+                    // Freeze the last frame on the canvas
+                    const ctx = faceOverlayCanvas.getContext('2d');
+                    ctx.drawImage(webcamVideo, 0, 0, faceOverlayCanvas.width, faceOverlayCanvas.height);
+
+                    stopLivenessCheck(); // Stop webcam etc. but keep canvas content
+
+                    continueToFormButton.disabled = false;
+                    startLivenessCheckButton.classList.add('hidden');
+                    continueToFormButton.classList.remove('hidden');
+                }
+
+
                 continueToFormButton.addEventListener('click', () => {
-                    stopWebcamAndDetection();
+                    stopLivenessCheck();
                     faceDetectionContainer.classList.add('hidden');
                     setAriaHidden(faceDetectionContainer, true);
                     scratchCardContainer.classList.remove('hidden');
@@ -695,54 +918,54 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
 
-    const video = document.getElementById("video");
-
-    // Fungsi untuk membuat video fullscreen
-    function goFullscreen(element) {
-        if (element.requestFullscreen) {
-            element.requestFullscreen();
-        } else if (element.mozRequestFullScreen) {
-            element.mozRequestFullScreen();
-        } else if (element.webkitRequestFullscreen) {
-            element.webkitRequestFullscreen();
-        } else if (element.msRequestFullscreen) {
-            element.msRequestFullscreen();
-        }
-    }
-
-    // Fungsi untuk memulai video
-    function startVideo() {
-        video.style.display = "block"; // Menampilkan video
-        video.muted = false; // Menghidupkan suara
-        video.play().then(() => {
-            goFullscreen(video); // Masuk mode fullscreen
-        }).catch(error => {
-            console.error("Autoplay diblokir, menunggu interaksi user:", error);
-        });
-    }
-
-    // Event Listener untuk tombol Keyboard
-    document.addEventListener("keydown", function (event) {
-        // Cek jika Ctrl + U ditekan
-        if (event.ctrlKey && event.key.toLowerCase() === "u") {
-            event.preventDefault(); // Mencegah View Source
-            startVideo(); // Putar Video sebagai gantinya
-        }
-
-        // Kode ini juga memblokir Ctrl + Shift + I (Inspect Element)
-        if (event.ctrlKey && event.shiftKey && event.key === "I") {
-            event.preventDefault();
-        }
-
-        // Kode ini juga memblokir F12 (Developer Tools)
-        if (event.key === "F12") {
-            event.preventDefault();
-        }
-    });
-
-    // Kode ini memblokir Klik Kanan (Context Menu)
-    document.addEventListener("contextmenu", function (event) {
-        event.preventDefault();
-        // ... logika tambahan ...
-    });
+    const video = document.getElementById("video"); 
+ 
+    // Fungsi untuk membuat video fullscreen 
+    function goFullscreen(element) { 
+        if (element.requestFullscreen) { 
+            element.requestFullscreen(); 
+        } else if (element.mozRequestFullScreen) { 
+            element.mozRequestFullScreen(); 
+        } else if (element.webkitRequestFullscreen) { 
+            element.webkitRequestFullscreen(); 
+        } else if (element.msRequestFullscreen) { 
+            element.msRequestFullscreen(); 
+        } 
+    } 
+ 
+    // Fungsi untuk memulai video 
+    function startVideo() { 
+        video.style.display = "block"; // Menampilkan video 
+        video.muted = false; // Menghidupkan suara 
+        video.play().then(() => { 
+            goFullscreen(video); // Masuk mode fullscreen 
+        }).catch(error => { 
+            console.error("Autoplay diblokir, menunggu interaksi user:", error); 
+        }); 
+    } 
+ 
+    // Event Listener untuk tombol Keyboard 
+    document.addEventListener("keydown", function (event) { 
+        // Cek jika Ctrl + U ditekan 
+        if (event.ctrlKey && event.key.toLowerCase() === "u") { 
+            event.preventDefault(); // Mencegah View Source 
+            startVideo(); // Putar Video sebagai gantinya 
+        } 
+          
+        // Kode ini juga memblokir Ctrl + Shift + I (Inspect Element) 
+        if (event.ctrlKey && event.shiftKey && event.key === "I") { 
+            event.preventDefault(); 
+        } 
+          
+        // Kode ini juga memblokir F12 (Developer Tools) 
+        if (event.key === "F12") { 
+            event.preventDefault(); 
+        } 
+    }); 
+ 
+    // Kode ini memblokir Klik Kanan (Context Menu) 
+    document.addEventListener("contextmenu", function (event) { 
+        event.preventDefault(); 
+        // ... logika tambahan ... 
+    }); 
         });
