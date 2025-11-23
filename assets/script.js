@@ -253,9 +253,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div id="scannerLogs" class="hidden"></div>
                         <div id="scanlineOverlay" class="hidden absolute top-0 left-0 w-full h-full pointer-events-none z-10 rounded-xl" style="background: repeating-linear-gradient(0deg, rgba(0, 255, 255, 0.1), rgba(0, 255, 255, 0.1) 1px, transparent 1px, transparent 2px);"></div>
                         <div id="accessDeniedOverlay" class="hidden">
-                            <div class="access-denied-text">
-                                WAJAHMU TIDAK DIKETEMUKAN<br>RETRY
-                            </div>
                             <button type="button" id="retryWebcamButton" class="btn" style="width: auto; padding: 10px 30px; margin-top:10px;">COBA LAGI</button>
                         </div>
                     </div>
