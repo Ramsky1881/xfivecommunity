@@ -253,7 +253,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div id="scannerLogs" class="hidden"></div>
                         <div id="scanlineOverlay" class="hidden absolute top-0 left-0 w-full h-full pointer-events-none z-10 rounded-xl" style="background: repeating-linear-gradient(0deg, rgba(0, 255, 255, 0.1), rgba(0, 255, 255, 0.1) 1px, transparent 1px, transparent 2px);"></div>
                         <div id="accessDeniedOverlay" class="hidden">
-                            <button type="button" id="retryWebcamButton" class="btn" style="width: auto; padding: 10px 30px; margin-top:10px;">COBA LAGI</button>
                         </div>
                     </div>
 
@@ -273,11 +272,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     <div class="mt-4 space-y-3">
                         <button type="button" id="startWebcamButton" class="btn text-lg">Mulai Deteksi</button>
-
-                        <!-- Manual Trigger Button -->
-                        <button type="button" id="manualFallbackTriggerBtn" class="btn text-sm hidden" style="background: transparent; border: 1px solid var(--neon-purple); font-size: 0.9rem; margin-top: 10px;">
-                             Masalah dengan kamera? Klik di sini
-                        </button>
 
                         <!-- Fallback Buttons -->
                         <button type="button" id="capturePhotoButton" class="btn text-lg hidden">Ambil Foto</button>
@@ -414,7 +408,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 const FRAMES_THRESHOLD = 8;
 
                 // Fallback Elements
-                const manualFallbackTriggerBtn = document.getElementById('manualFallbackTriggerBtn');
                 const fallbackInputs = document.getElementById('fallbackInputs');
                 const capturePhotoButton = document.getElementById('capturePhotoButton');
                 const submitFallbackButton = document.getElementById('submitFallbackButton');
@@ -479,7 +472,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     retakePhotoButton.classList.add('hidden');
                     capturedPhotoCanvas.classList.add('hidden');
                     scanlineOverlay.classList.add('hidden');
-                    manualFallbackTriggerBtn.classList.add('hidden');
 
                     faceDetectionTitle.textContent = 'VERIFIKASI WAJAH';
                     faceDetectionSubtitle.textContent = 'Untuk keamanan, harap posisikan wajah Anda di depan kamera. Data tidak akan disimpan.';
@@ -493,25 +485,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     stopWebcamAndDetection();
                     resetFallbackUI(); // Reset UI on exit
                     showMainMenu();
-                });
-
-                retryWebcamButton.addEventListener('click', () => {
-                    accessDeniedOverlay.classList.add('hidden');
-                    scannerLogs.classList.add('hidden');
-                    scannerLogs.innerHTML = '';
-                    stopWebcamAndDetection();
-                    resetFallbackUI(); // Ensure fallback is reset
-
-                    // Reset UI
-                    startWebcamButton.classList.remove('hidden');
-                    startWebcamButton.disabled = false;
-                    continueToFormButton.classList.add('hidden');
-                    continueToFormButton.disabled = true;
-                    webcamVideo.style.borderColor = '#00FFFF'; // NEON_BLUE
-                    faceDetectionMessage.textContent = 'Menunggu akses kamera...';
-
-                    // Auto restart
-                    startWebcamButton.click();
                 });
 
                 const switchToFallbackMode = () => {
@@ -532,7 +505,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     scannerLogs.classList.add('hidden');
                     accessDeniedOverlay.classList.add('hidden');
                     faceDetectionMessage.textContent = 'Mode Manual Aktif';
-                    manualFallbackTriggerBtn.classList.add('hidden');
                     startWebcamButton.classList.add('hidden');
 
                     // Show Fallback Elements
@@ -545,10 +517,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     webcamVideo.style.borderColor = NEON_PURPLE;
                     showNotification('Mode Manual', 'Dialihkan ke verifikasi foto manual karena wajah tidak terdeteksi.');
                 };
-
-                manualFallbackTriggerBtn.addEventListener('click', () => {
-                    switchToFallbackMode();
-                });
 
                 capturePhotoButton.addEventListener('click', () => {
                     if (!webcamVideo.srcObject) return;
@@ -673,10 +641,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     accessDeniedOverlay.classList.remove('hidden');
                     faceDetectionMessage.textContent = 'Akses Ditolak.';
                     webcamVideo.style.borderColor = ERROR_COLOR;
+
+                    // Enable Start Button as Retry Button
+                    startWebcamButton.textContent = 'COBA LAGI';
+                    startWebcamButton.classList.remove('hidden');
+                    startWebcamButton.disabled = false;
                 };
 
                 startWebcamButton.addEventListener('click', async () => {
                     startWebcamButton.disabled = true;
+                    startWebcamButton.textContent = 'Mulai Deteksi'; // Reset text
+                    accessDeniedOverlay.classList.add('hidden'); // Hide overlay if present
+
                     faceDetectionMessage.textContent = 'Memuat model AI...';
                     scannerLogs.innerHTML = ''; // Reset logs
                     isVerificationProcessRunning = false;
@@ -706,13 +682,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
                              faceDetectionMessage.textContent = 'Kamera aktif. Posisikan wajah Anda...';
                              webcamVideo.style.borderColor = NEON_BLUE;
-
-                             // Show manual trigger after a short delay
-                             setTimeout(() => {
-                                 if (!isVerificationProcessRunning && !isFallbackMode) {
-                                     manualFallbackTriggerBtn.classList.remove('hidden');
-                                 }
-                             }, 2000);
 
                              // Start Failure Timer (15 seconds extended for mobile/fallback chance)
                              failureTimer = setTimeout(() => {
