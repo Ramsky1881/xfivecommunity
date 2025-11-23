@@ -1,0 +1,24 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "Repositori ini berisi file **HTML** untuk halaman aturan resmi komunitas **XFIVE**.   Project ini dibuat untuk memberikan dokumentasi aturan komunitas dalam bentuk website.",
+  "main": "sw.js",
+  "scripts": {
+    "build": "rm -rf dist && mkdir -p dist && cp index.html dist/ && cp sw.js dist/ && cp -r assets dist/ && javascript-obfuscator assets --output dist/assets"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ramsky1881/xfivecommunity.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Ramsky1881/xfivecommunity/issues"
+  },
+  "homepage": "https://github.com/Ramsky1881/xfivecommunity#readme",
+  "devDependencies": {
+    "javascript-obfuscator": "^4.1.1"
+  }
+}
