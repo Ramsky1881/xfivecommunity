@@ -244,12 +244,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     <button type="button" id="continueButton" class="btn text-lg mt-8" disabled>Lanjutkan</button>
                 </div>
                 <div id="faceDetectionContainer" class="hidden" aria-hidden="true">
-                    <h2 class="text-3xl font-bold text-center mb-8 glitch-text">VERIFIKASI WAJAH</h2>
-                    <p class="text-center mb-4">Untuk keamanan, harap posisikan wajah Anda di depan kamera. Data tidak akan disimpan.</p>
+                    <h2 id="faceDetectionTitle" class="text-3xl font-bold text-center mb-8 glitch-text">VERIFIKASI WAJAH</h2>
+                    <p id="faceDetectionSubtitle" class="text-center mb-4">Untuk keamanan, harap posisikan wajah Anda di depan kamera. Data tidak akan disimpan.</p>
 
                     <div id="videoContainerWrapper">
                         <video id="webcamVideo" autoplay muted playsinline></video>
+                        <canvas id="capturedPhotoCanvas" class="hidden w-full h-full object-cover absolute top-0 left-0 rounded-xl"></canvas>
                         <div id="scannerLogs" class="hidden"></div>
+                        <div id="scanlineOverlay" class="hidden absolute top-0 left-0 w-full h-full pointer-events-none z-10 rounded-xl" style="background: repeating-linear-gradient(0deg, rgba(0, 255, 255, 0.1), rgba(0, 255, 255, 0.1) 1px, transparent 1px, transparent 2px);"></div>
                         <div id="accessDeniedOverlay" class="hidden">
                             <div class="access-denied-text">
                                 WAJAHMU TIDAK DIKETEMUKAN<br>RETRY
@@ -259,8 +261,32 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
 
                     <p id="faceDetectionMessage" class="text-center" role="status" aria-live="polite">Menunggu akses kamera...</p>
+
+                    <!-- Fallback Inputs -->
+                    <div id="fallbackInputs" class="hidden space-y-4 mt-4 fade-in">
+                        <div class="form-group">
+                             <label for="manualFullName">Nama Lengkap:</label>
+                             <input type="text" id="manualFullName" placeholder="Masukkan Nama Lengkap">
+                        </div>
+                        <div class="form-group">
+                             <label for="manualNickname">Nickname:</label>
+                             <input type="text" id="manualNickname" placeholder="Masukkan Nickname">
+                        </div>
+                    </div>
+
                     <div class="mt-4 space-y-3">
                         <button type="button" id="startWebcamButton" class="btn text-lg">Mulai Deteksi</button>
+
+                        <!-- Manual Trigger Button -->
+                        <button type="button" id="manualFallbackTriggerBtn" class="btn text-sm hidden" style="background: transparent; border: 1px solid var(--neon-purple); font-size: 0.9rem; margin-top: 10px;">
+                             Masalah dengan kamera? Klik di sini
+                        </button>
+
+                        <!-- Fallback Buttons -->
+                        <button type="button" id="capturePhotoButton" class="btn text-lg hidden">Ambil Foto</button>
+                        <button type="button" id="submitFallbackButton" class="btn text-lg hidden">Kirim Data & Foto</button>
+                        <button type="button" id="retakePhotoButton" class="btn text-lg hidden" style="background: rgba(255,0,0,0.3);">Foto Ulang</button>
+
                         <button type="button" id="continueToFormButton" class="btn text-lg hidden" disabled>Lanjutkan</button>
                     </div>
                 </div>
@@ -379,6 +405,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 let failureTimer = null;
                 let isVerificationProcessRunning = false;
 
+                // --- Fallback Logic Variables ---
+                let noFaceFrames = 0;
+                let isFallbackMode = false;
+                const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+                const NO_FACE_THRESHOLD = 15; // Approx 3-4 seconds at 500ms interval (actually 15*0.5 = 7.5s, wait user said 100 frames at 30fps. My interval is 500ms. To match 3s, I need 6 checks. I'll use 8.)
+                // User asked for 100 frames threshold (approx 3-4s).
+                // My loop is 500ms. 100 frames is meaningless here unless I change loop speed.
+                // But user explanation: "Jika kamera jalan di 30fps, 100 frame itu sekitar 3,3 detik."
+                // Since I run at 2 FPS (500ms), I need ~6-8 frames to reach 3-4 seconds.
+                const FRAMES_THRESHOLD = 8;
+
+                // Fallback Elements
+                const manualFallbackTriggerBtn = document.getElementById('manualFallbackTriggerBtn');
+                const fallbackInputs = document.getElementById('fallbackInputs');
+                const capturePhotoButton = document.getElementById('capturePhotoButton');
+                const submitFallbackButton = document.getElementById('submitFallbackButton');
+                const retakePhotoButton = document.getElementById('retakePhotoButton');
+                const capturedPhotoCanvas = document.getElementById('capturedPhotoCanvas');
+                const scanlineOverlay = document.getElementById('scanlineOverlay');
+                const faceDetectionTitle = document.getElementById('faceDetectionTitle');
+                const faceDetectionSubtitle = document.getElementById('faceDetectionSubtitle');
+                const manualFullName = document.getElementById('manualFullName');
+                const manualNickname = document.getElementById('manualNickname');
+
                 const notificationModal = {
                     overlay: notificationModalOverlay,
                     title: document.getElementById('modalTitle'),
@@ -404,7 +454,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 setSelectOptionColors(testerSelect);
                 setSelectOptionColors(divisiCommunitySelect);
 
-                function stopWebcamAndDetection() {
+                function stopWebcamAndDetection(stopStream = true) {
                     if (detectionInterval) {
                         clearInterval(detectionInterval);
                         detectionInterval = null;
@@ -413,18 +463,38 @@ document.addEventListener('DOMContentLoaded', function() {
                         clearTimeout(failureTimer);
                         failureTimer = null;
                     }
-                    if (mediaStream) {
+                    if (stopStream && mediaStream) {
                         mediaStream.getTracks().forEach(track => track.stop());
                         mediaStream = null;
-                    }
-                    if (webcamVideo) {
-                        webcamVideo.srcObject = null;
+                        if (webcamVideo) {
+                            webcamVideo.srcObject = null;
+                        }
                     }
                     isVerificationProcessRunning = false;
                 }
 
+                function resetFallbackUI() {
+                    isFallbackMode = false;
+                    noFaceFrames = 0;
+                    fallbackInputs.classList.add('hidden');
+                    capturePhotoButton.classList.add('hidden');
+                    submitFallbackButton.classList.add('hidden');
+                    retakePhotoButton.classList.add('hidden');
+                    capturedPhotoCanvas.classList.add('hidden');
+                    scanlineOverlay.classList.add('hidden');
+                    manualFallbackTriggerBtn.classList.add('hidden');
+
+                    faceDetectionTitle.textContent = 'VERIFIKASI WAJAH';
+                    faceDetectionSubtitle.textContent = 'Untuk keamanan, harap posisikan wajah Anda di depan kamera. Data tidak akan disimpan.';
+                    faceDetectionSubtitle.classList.remove('hidden');
+
+                    manualFullName.value = '';
+                    manualNickname.value = '';
+                }
+
                 backToMenuBtn.addEventListener('click', () => {
                     stopWebcamAndDetection();
+                    resetFallbackUI(); // Reset UI on exit
                     showMainMenu();
                 });
 
@@ -433,6 +503,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     scannerLogs.classList.add('hidden');
                     scannerLogs.innerHTML = '';
                     stopWebcamAndDetection();
+                    resetFallbackUI(); // Ensure fallback is reset
 
                     // Reset UI
                     startWebcamButton.classList.remove('hidden');
@@ -444,6 +515,103 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // Auto restart
                     startWebcamButton.click();
+                });
+
+                const switchToFallbackMode = () => {
+                    if (isFallbackMode) return;
+                    isFallbackMode = true;
+
+                    // Stop detection but KEEP camera running
+                    if (detectionInterval) {
+                        clearInterval(detectionInterval);
+                        detectionInterval = null;
+                    }
+                    if (failureTimer) {
+                        clearTimeout(failureTimer);
+                        failureTimer = null;
+                    }
+
+                    // Hide Auto Mode Elements
+                    scannerLogs.classList.add('hidden');
+                    accessDeniedOverlay.classList.add('hidden');
+                    faceDetectionMessage.textContent = 'Mode Manual Aktif';
+                    manualFallbackTriggerBtn.classList.add('hidden');
+                    startWebcamButton.classList.add('hidden');
+
+                    // Show Fallback Elements
+                    fallbackInputs.classList.remove('hidden');
+                    capturePhotoButton.classList.remove('hidden');
+
+                    faceDetectionTitle.textContent = 'VERIFIKASI MANUAL';
+                    faceDetectionSubtitle.classList.add('hidden'); // Hide subtitle to save space
+
+                    webcamVideo.style.borderColor = NEON_PURPLE;
+                    showNotification('Mode Manual', 'Dialihkan ke verifikasi foto manual karena wajah tidak terdeteksi.');
+                };
+
+                manualFallbackTriggerBtn.addEventListener('click', () => {
+                    switchToFallbackMode();
+                });
+
+                capturePhotoButton.addEventListener('click', () => {
+                    if (!webcamVideo.srcObject) return;
+
+                    // Capture frame to canvas
+                    capturedPhotoCanvas.width = webcamVideo.videoWidth;
+                    capturedPhotoCanvas.height = webcamVideo.videoHeight;
+                    const ctx = capturedPhotoCanvas.getContext('2d');
+
+                    // Mirror logic matching CSS transform: scaleX(-1)
+                    ctx.translate(capturedPhotoCanvas.width, 0);
+                    ctx.scale(-1, 1);
+                    ctx.drawImage(webcamVideo, 0, 0, capturedPhotoCanvas.width, capturedPhotoCanvas.height);
+
+                    // Show preview
+                    capturedPhotoCanvas.classList.remove('hidden');
+                    scanlineOverlay.classList.remove('hidden');
+
+                    // Update buttons
+                    capturePhotoButton.classList.add('hidden');
+                    submitFallbackButton.classList.remove('hidden');
+                    retakePhotoButton.classList.remove('hidden');
+                });
+
+                retakePhotoButton.addEventListener('click', () => {
+                    capturedPhotoCanvas.classList.add('hidden');
+                    scanlineOverlay.classList.add('hidden');
+
+                    capturePhotoButton.classList.remove('hidden');
+                    submitFallbackButton.classList.add('hidden');
+                    retakePhotoButton.classList.add('hidden');
+                });
+
+                submitFallbackButton.addEventListener('click', () => {
+                    if (!manualFullName.value.trim() || !manualNickname.value.trim()) {
+                        showNotification('Data Kurang', 'Harap isi Nama dan Nickname!');
+                        return;
+                    }
+
+                    // Simulate verification success
+                    faceDetectionMessage.textContent = 'Data Foto Terkirim!';
+
+                    // Use the data for the member form
+                    document.getElementById('namaPanggilan').value = manualFullName.value;
+                    document.getElementById('nicknameAyodance').value = manualNickname.value;
+
+                    // Proceed to next step (Scratch Card)
+                    setTimeout(() => {
+                        stopWebcamAndDetection(); // Stop camera now
+                        faceDetectionContainer.classList.add('hidden');
+                        setAriaHidden(faceDetectionContainer, true);
+                        scratchCardContainer.classList.remove('hidden');
+                        setAriaHidden(scratchCardContainer, false);
+                        scratchCardContainer.classList.add('fade-in');
+                        // Ensure canvas is set up correctly
+                        setTimeout(() => {
+                            const setupCanvasEvent = new Event('setupcanvas');
+                            scratchCanvas.dispatchEvent(setupCanvasEvent);
+                        }, 10);
+                    }, 1000);
                 });
 
                 agreeToRulesCheckbox.addEventListener('change', () => {
@@ -515,6 +683,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     faceDetectionMessage.textContent = 'Memuat model AI...';
                     scannerLogs.innerHTML = ''; // Reset logs
                     isVerificationProcessRunning = false;
+                    resetFallbackUI(); // Ensure clean state
 
                     try {
                         // Load face-api models
@@ -522,30 +691,58 @@ document.addEventListener('DOMContentLoaded', function() {
                         await faceapi.nets.tinyFaceDetector.loadFromUri(modelPath);
 
                         faceDetectionMessage.textContent = 'Meminta akses kamera...';
-                        mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                        // Optimization for mobile: request lower resolution if possible
+                        const constraints = {
+                            video: {
+                                width: { ideal: 640 },
+                                height: { ideal: 480 },
+                                facingMode: 'user'
+                            }
+                        };
+                        mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
                         webcamVideo.srcObject = mediaStream;
 
                         webcamVideo.onplaying = () => {
+                             // Clear previous timers if onplaying fires multiple times
+                             if (failureTimer) clearTimeout(failureTimer);
+                             if (detectionInterval) clearInterval(detectionInterval);
+
                              faceDetectionMessage.textContent = 'Kamera aktif. Posisikan wajah Anda...';
                              webcamVideo.style.borderColor = NEON_BLUE;
 
-                             // Start Failure Timer (10 seconds)
+                             // Show manual trigger after a short delay
+                             setTimeout(() => {
+                                 if (!isVerificationProcessRunning && !isFallbackMode) {
+                                     manualFallbackTriggerBtn.classList.remove('hidden');
+                                 }
+                             }, 2000);
+
+                             // Start Failure Timer (15 seconds extended for mobile/fallback chance)
                              failureTimer = setTimeout(() => {
-                                 triggerAccessDenied();
-                             }, 10000);
+                                 if (!isFallbackMode && !isVerificationProcessRunning) {
+                                     triggerAccessDenied();
+                                 }
+                             }, 15000);
 
                              detectionInterval = setInterval(async () => {
-                                if (!webcamVideo.srcObject) return; // Stop if stream is gone
+                                if (!webcamVideo.srcObject || isFallbackMode) return; // Stop if stream is gone or in fallback
 
                                 // Use face-api to detect
                                 const detection = await faceapi.detectSingleFace(webcamVideo, new faceapi.TinyFaceDetectorOptions());
 
                                 if (detection) {
-                                    // Face found -> Run sequence
+                                    // Face found
+                                    noFaceFrames = 0;
                                     runVerificationSequence();
                                 } else {
                                     // No face
                                     webcamVideo.style.borderColor = ERROR_COLOR;
+                                    noFaceFrames++;
+
+                                    // Fallback Logic
+                                    if (noFaceFrames > FRAMES_THRESHOLD && isMobile && !isFallbackMode) {
+                                        switchToFallbackMode();
+                                    }
                                 }
                             }, 500); // Check every 500ms
                         };
@@ -555,6 +752,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         faceDetectionMessage.textContent = 'Gagal: Izin kamera ditolak atau model gagal dimuat.';
                         webcamVideo.style.borderColor = ERROR_COLOR;
                         startWebcamButton.disabled = false;
+                        // If camera fails completely, offer manual mode directly?
+                        // For now, just let them retry.
                     }
                 });
 
