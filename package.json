@@ -4,7 +4,7 @@
   "description": "Repositori ini berisi file **HTML** untuk halaman aturan resmi komunitas **XFIVE**.   Project ini dibuat untuk memberikan dokumentasi aturan komunitas dalam bentuk website.",
   "main": "sw.js",
   "scripts": {
-    "build": "rm -rf dist && mkdir -p dist && cp index.html dist/ && cp sw.js dist/ && cp -r assets dist/ && javascript-obfuscator assets --output dist/assets"
+    "build": "rm -rf dist && mkdir -p dist && cp index.html dist/ && cp sw.js dist/ && cp -r assets dist/ && javascript-obfuscator assets --output dist/assets --config obfuscator-config.js"
   },
   "repository": {
     "type": "git",
