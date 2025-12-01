@@ -112,13 +112,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // --- Data ---
             const testerData = {
-                "Ramsky": "6285693393707", "Fadel": "6282173876492",
-                "Iqbal": "6282162155012", "Thomas": "6281374402822",
-                "Joko": "6289514915776", "Citra": "6283825756494",
-                "Dena": "6282165791404", "Vandhu": "6281371412119",
-                "Wicaksono": "6285211516594",
-                "Wale": "6282276260740", "Zarah": "6281342620907",
-                "Vania": "6281776897588"
+                "Ramsky": "6285692193707", "Fadel": "6282121836492",
+                "Iqbal": "6282212153012", "Thomas": "6281321432822",
+                "Joko": "6289514213776", "Citra": "6283825723494",
+                "Dena": "6282121791404", "Vandhu": "6281332112119",
+                "Wicaksono": "6282111516594",
+                "Wale": "6282176221740", "Zarah": "6281112620907",
+                "Vania": "6281721837588"
             };
             const googleAppsScriptURL = 'https://script.google.com/macros/s/AKfycbwEUL4YkEYBfaIl1-T2jYueJorhn5SyS2q1YLpse5bhlleULPXIy3TjnwkputvVm156gg/exec';
 
